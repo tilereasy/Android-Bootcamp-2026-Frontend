@@ -10,13 +10,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -40,13 +47,13 @@ fun HomeScreen (
 
     var viewType by remember { mutableStateOf("День") }
 
-    // Флаг для иконки уведомлений
-    var hasInvites by remember { mutableStateOf(false) }
+    // Иконка уведов есть/нет
+    var hasInvites by remember { mutableStateOf(true) }
 
-    // Флаг для встреч
+    // Встречи есть/нет
     var hasMeetings by remember { mutableStateOf(false) }
 
-    var showViewTypeMenu by remember { mutableStateOf(false) }
+    var showViewTypeMenu by remember { mutableStateOf(true) }
 
 
     Scaffold(
@@ -85,9 +92,9 @@ fun HomeScreen (
                 ){
                     Text(
                         text = viewType,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                            color = Black
+                            color = DarkBlue
                     )
                 }
 
@@ -114,12 +121,12 @@ fun HomeScreen (
                             badge = {
                                 Badge(
                                     modifier = Modifier
-                                        .offset(x = (-8).dp, y = 8.dp)
+                                        .offset(x = (-2).dp, y = (-2).dp)
                                         .background(
                                             color = Color.Red,
                                             shape = RoundedCornerShape(50.dp)
                                         )
-                                        .size(8.dp)
+                                        .size(10.dp)
                                 )
                             }
                         ) {
@@ -127,14 +134,14 @@ fun HomeScreen (
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = "Notifications",
                                 tint = DarkBlue,
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(30.dp)
                             )
                         }
                     } else {
                         Icon(
                             imageVector = Icons.Default.Notifications,
                             contentDescription = "Notifications",
-                            tint = TextGrey,
+                            tint = IconsGrey,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -154,10 +161,45 @@ fun HomeScreen (
 }
 
 
-// НЕТ ВСТРЕЧ
+// ЕСЛИ НЕТ ВСТРЕЧ
 @Composable
-fun EmptyMeetingsState(){
+fun EmptyMeetingsState(onCreateMeetingClick: () -> Unit){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.SearchOff,
+            //painter = painterResource(id = R.drawable.lupa),
+            contentDescription = "No meetings",
+            modifier = Modifier.size(150.dp),
+            tint = Black
+        )
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "У вас пока нет встреч",
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+            color = DarkBlue,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        // Возможно переделать этот текст под кнопку, если будет время
+        Text(
+            text = "Запланировать?",
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.open_sans_extrabold)),
+            color = DarkBlue,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
 }
 
 // ЕСТЬ ВСТРЕЧИ, ЗАГЛУШКА
@@ -179,6 +221,66 @@ fun MeetingsListPlaceholder() {
     }
 }
 
+// Bottom navigation Bar
+@Composable
+fun BottomNavigationBarHome(
+    onHomeClick: () -> Unit = {},
+    onCreateClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
+){
+    NavigationBar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(79.dp),
+        containerColor = White,
+        tonalElevation = 8.dp
+    ) {
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Home",
+                    modifier = Modifier.size(45.dp),
+                    tint = DarkBlue
+                )
+            },
+            label = { Text("") },
+            selected = true,
+            onClick = onHomeClick,
+            modifier = Modifier.weight(1f)
+        )
+
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.AddCircleOutline,
+                    contentDescription = "Create",
+                    modifier = Modifier.size(45.dp),
+                    tint = IconsGrey
+                )
+            },
+            label = { Text("") },
+            selected = false,
+            onClick = onCreateClick,
+            modifier = Modifier.weight(1f)
+        )
+
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(45.dp),
+                    tint = IconsGrey
+                )
+            },
+            label = { Text("") },
+            selected = false,
+            onClick = onProfileClick,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
 
 
 @Preview

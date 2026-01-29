@@ -20,6 +20,7 @@ drawable edit_icon
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable log_out_icon
+drawable lupa
 drawable main_blue_icon
 drawable main_grey_icon
 drawable no_notifications_icon
