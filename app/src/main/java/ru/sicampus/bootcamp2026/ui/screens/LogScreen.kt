@@ -263,6 +263,8 @@ fun LogScreen(
 
 @Preview
 @Composable
-fun Show(){
-    LogScreen()
+fun ShowLogScreen(){
+    AppTheme {
+        LogScreen()
+    }
 }
