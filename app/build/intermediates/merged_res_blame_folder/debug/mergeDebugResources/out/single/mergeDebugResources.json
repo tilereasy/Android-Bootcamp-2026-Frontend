@@ -16,6 +16,14 @@
         "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\font\\open_sans_regular.ttf"
     },
     {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_lupa.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\lupa.xml"
+    },
+    {
+        "merged": "ru.sicampus.bootcamp2026.app-debug-4:/drawable_lupa_icon.xml.flat",
+        "source": "ru.sicampus.bootcamp2026.app-main-6:/drawable/lupa_icon.xml"
+    },
+    {
         "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\xml_data_extraction_rules.xml.flat",
         "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\xml\\data_extraction_rules.xml"
     },
@@ -82,10 +90,6 @@
     {
         "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_account_grey_icon.xml.flat",
         "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\account_grey_icon.xml"
-    },
-    {
-        "merged": "ru.sicampus.bootcamp2026.app-debug-4:/drawable_lupa.xml.flat",
-        "source": "ru.sicampus.bootcamp2026.app-main-6:/drawable/lupa.xml"
     },
     {
         "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_create_2_grey_icon.xml.flat",

@@ -142,7 +142,7 @@ fun HomeScreen (
                             imageVector = Icons.Default.Notifications,
                             contentDescription = "Notifications",
                             tint = IconsGrey,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(30.dp)
                         )
                     }
                 }
@@ -173,7 +173,7 @@ fun EmptyMeetingsState(onCreateMeetingClick: () -> Unit){
     ) {
         Icon(
             imageVector = Icons.Default.SearchOff,
-            //painter = painterResource(id = R.drawable.lupa),
+            //painter = painterResource(id = R.drawable.lupa_icon),
             contentDescription = "No meetings",
             modifier = Modifier.size(150.dp),
             tint = Black

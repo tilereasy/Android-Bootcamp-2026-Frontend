@@ -102,7 +102,7 @@ int drawable ic_call_decline_low 0x7f040011
 int drawable ic_launcher_background 0x7f040012
 int drawable ic_launcher_foreground 0x7f040013
 int drawable log_out_icon 0x7f040014
-int drawable lupa 0x7f040015
+int drawable lupa_icon 0x7f040015
 int drawable main_blue_icon 0x7f040016
 int drawable main_grey_icon 0x7f040017
 int drawable no_notifications_icon 0x7f040018
