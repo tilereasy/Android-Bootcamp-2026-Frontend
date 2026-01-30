@@ -271,7 +271,7 @@ fun ProfileScreen (
 }
 
 
-// Bottom navigation Bar
+// Bottom navigation Bar2 потом в отдельный компонент и тд
 @Composable
 fun BottomNavigationBarHome2(
     onHomeClick: () -> Unit = {},
