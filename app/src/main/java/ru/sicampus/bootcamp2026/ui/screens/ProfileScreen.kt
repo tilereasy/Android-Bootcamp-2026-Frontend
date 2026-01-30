@@ -1,6 +1,7 @@
 package ru.sicampus.bootcamp2026.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
@@ -43,6 +44,12 @@ fun ProfileScreen (
     onCreateMeetingClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
+
+    var email by remember { mutableStateOf("") }
+    var fullName by remember { mutableStateOf("") }
+    var department by remember { mutableStateOf("") }
+    var position by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Scaffold(
         bottomBar = {
@@ -109,7 +116,156 @@ fun ProfileScreen (
             )
 
 
+            Spacer(modifier = Modifier.height(24.dp))
 
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+
+                Column {
+                    Text(
+                        text = "Почта",
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                        color = TextGrey,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+
+                    )
+                    TextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = {
+                            Text(
+                                text = "email@ex.domain",
+                                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                                color = Black
+                            )
+                        },
+                        modifier = Modifier
+                            .padding(start = 25.dp, end = 25.dp)
+                            .fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Black,
+                            unfocusedTextColor = Black,
+                            focusedContainerColor = Grey,
+                            unfocusedContainerColor = Grey,
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Отдел",
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                        color = TextGrey,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+
+                    )
+                    TextField(
+                        value = department,
+                        onValueChange = { department = it },
+                        label = {
+                            Text(
+                                text = "отдел андроида",
+                                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                                color = Black
+                            )
+                        },
+                        modifier = Modifier
+                            .padding(start = 25.dp, end = 25.dp)
+                            .fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Black,
+                            unfocusedTextColor = Black,
+                            focusedContainerColor = Grey,
+                            unfocusedContainerColor = Grey,
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Должность",
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                        color = TextGrey,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+
+                    )
+                    TextField(
+                        value = position,
+                        onValueChange = { position = it },
+                        label = {
+                            Text(
+                                text = "гендир",
+                                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                                color = Black
+                            )
+                        },
+                        modifier = Modifier
+                            .padding(start = 25.dp, end = 25.dp)
+                            .fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Black,
+                            unfocusedTextColor = Black,
+                            focusedContainerColor = Grey,
+                            unfocusedContainerColor = Grey,
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Column {
+                        Text(
+                            text = "Пароль",
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                            color = TextGrey,
+                            modifier = Modifier.padding(horizontal = 24.dp)
+                        )
+                        TextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            label = {
+                                Text(
+                                    text = "••••••••",
+                                    fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                                    color = Black
+                                )
+                            },
+                            modifier = Modifier
+                                .padding(start = 25.dp, end = 25.dp)
+                                .fillMaxWidth(),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Black,
+                                unfocusedTextColor = Black,
+                                focusedContainerColor = Grey,
+                                unfocusedContainerColor = Grey,
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }
