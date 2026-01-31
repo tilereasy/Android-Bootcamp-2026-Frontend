@@ -191,3 +191,5 @@
 - Отрисовка слотов строго по часам (особенно Day view).
 - Интеграция API “расписание в диапазоне дат”.
 
+# Макет приложения
+https://www.figma.com/design/X7Kp2gmSu5nTt3mpFwV7d0/neRacov-meet?m=auto&t=SKUlJ0QWWfpageTR-1

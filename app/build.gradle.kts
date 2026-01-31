@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "ru.sicampus.bootcamp2026"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ru.sicampus.bootcamp2026"
@@ -56,4 +56,25 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //BOM - управляет версиями компоуз автоматически
+    implementation(platform("androidx.compose:compose-bom:2026.01.00"))
+
+    // Базовый UI Compose
+    implementation("androidx.compose.ui:ui")
+
+    // Material 3 (кнопки, текст, топбары)
+    implementation("androidx.compose.material3:material3")
+
+    // Preview в андроид студио
+    implementation("androidx.compose.ui:ui-tooling-preview")
+
+    // Для доп иконок
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
+    // Для @Preview
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // Интеграция Compose с Activity
+    implementation("androidx.activity:activity-compose:1.12.2")
 }
