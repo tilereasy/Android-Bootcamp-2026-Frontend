@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="dark_blue">#3D577E</color>
+    <color name="grey">#D9D9D9</color>
+    <color name="icons_grey">#C5C5C5</color>
+    <color name="text_grey">#686868</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">neRacov MEET</string>
+    <string name="change_password">Сменить пароль</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="create_button">Создать</string>
+    <string name="create_meeting">Запланировать?</string>
+    <string name="create_meeting_activity">Создание встречи</string>
+    <string name="create_password">Придумайте пароль</string>
+    <string name="day">День</string>
+    <string name="department">Отдел</string>
+    <string name="description">Описание</string>
+    <string name="email_text">Электронная почта</string>
+    <string name="employee_position">Должность</string>
+    <string name="fullname_text">ФИО</string>
+    <string name="invite_participants">Пригласить участников</string>
+    <string name="meeting_name">Название встречи</string>
+    <string name="month">Месяц</string>
+    <string name="no_meetings">У вас пока нет запланированных встреч</string>
+    <string name="no_notifications">У вас пока нет уведомлений</string>
+    <string name="notifications">Уведомления</string>
+    <string name="password_text">Пароль</string>
+    <string name="sign_in_button">Войти</string>
+    <string name="sign_up_activity">Регистрация</string>
+    <string name="sign_up_button">Зарегистрироваться</string>
+    <string name="year">Год</string>
+    <style name="Theme.AndroidBootcamp2026Frontend" parent="android:Theme.Material.Light.NoActionBar"/>
+</resources>

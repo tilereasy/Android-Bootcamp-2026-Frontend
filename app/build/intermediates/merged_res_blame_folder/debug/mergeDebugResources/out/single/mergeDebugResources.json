@@ -1,0 +1,166 @@
+[
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\font_open_sans_bold.ttf.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\font\\open_sans_bold.ttf"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\font_open_sans_regular.ttf.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\font\\open_sans_regular.ttf"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_lupa.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\lupa.xml"
+    },
+    {
+        "merged": "ru.sicampus.bootcamp2026.app-debug-4:/drawable_lupa_icon.xml.flat",
+        "source": "ru.sicampus.bootcamp2026.app-main-6:/drawable/lupa_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\xml\\data_extraction_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\font_open_sans_semibold.ttf.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\font\\open_sans_semibold.ttf"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_clock_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\clock_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-mdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_calendar_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\calendar_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_triangle_grey_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\triangle_grey_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_notification_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\notification_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_main_blue_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\main_blue_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_create_1_blue_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\create_1_blue_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_account_grey_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\account_grey_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_create_2_grey_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\create_2_grey_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_edit_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\edit_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-xhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_log_out_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\log_out_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_arrow_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\arrow_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\font_open_sans_extrabold.ttf.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\font\\open_sans_extrabold.ttf"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_triangle_blue_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\triangle_blue_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_create_1_grey_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\create_1_grey_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_zalupa.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\zalupa.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_close_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\close_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_main_grey_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\main_grey_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_account_blue_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\account_blue_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_create_2_blue_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\create_2_blue_icon.xml"
+    },
+    {
+        "merged": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-debug-4:\\drawable_no_notifications_icon.xml.flat",
+        "source": "C:\\Users\\фвьшт\\.gradle\\daemon\\8.11.1\\ru.sicampus.bootcamp2026.app-main-6:\\drawable\\no_notifications_icon.xml"
+    }
+]
