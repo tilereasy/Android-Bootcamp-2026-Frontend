@@ -50,7 +50,7 @@ fun LogScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(ru.sicampus.bootcamp2026.R.drawable.arrow_icon),
+                painter = painterResource(R.drawable.arrow_icon),
                 contentDescription = "Назад",
                 modifier = Modifier
                     .align(Alignment.Start)
