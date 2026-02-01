@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.sicampus.bootcamp2026.ui.theme.*
 import ru.sicampus.bootcamp2026.R
+import ru.sicampus.bootcamp2026.ui.components.CustomButton
+import ru.sicampus.bootcamp2026.ui.components.CustomTextField
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,101 +63,52 @@ fun AuthScreen (
             Spacer(modifier = Modifier.height(52.dp))
 
             // Электронная почта
-            TextField(
+            CustomTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = {
-                    Text(
-                        text = "Электронная почта",
-                        fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                        color = TextGrey
-                    )
-                } ,
-                modifier = Modifier
-                    .padding(start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Black,
-                    unfocusedTextColor = Black,
-                    focusedContainerColor = Grey,
-                    unfocusedContainerColor = Grey,
-                    focusedBorderColor = Color.Transparent, // Убираем рамку
-                    unfocusedBorderColor = Color.Transparent // Убираем рамку
-                ),
-                shape = RoundedCornerShape(10.dp)
+                label = "Электронная почта",
+                TextGrey
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
 
             // Введите пароль
-            TextField(
+            CustomTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = {
-                    Text(
-                        text = "Пароль",
-                        fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                        color = TextGrey
-                    )
-                } ,
-                modifier = Modifier
-                    .padding(start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Black,
-                    unfocusedTextColor = Black,
-                    focusedContainerColor = Grey,
-                    unfocusedContainerColor = Grey,
-                    focusedBorderColor = Color.Transparent, // Убираем рамку
-                    unfocusedBorderColor = Color.Transparent // Убираем рамку
-                ),
-                shape = RoundedCornerShape(10.dp)
+                label = "Пароль",
+                TextGrey
             )
 
             Spacer(modifier = Modifier.height(57.dp))
 
+
             // Кнопка входа
-            Button(
-                onClick = onEnterClick,
-                modifier = Modifier
+            CustomButton(
+                "Войти",
+                DarkBlue,
+                White,
+                onEnterClick,
+                Modifier
                     .padding(start = 64.dp, end = 64.dp)
                     .fillMaxWidth()
-                    .height(36.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = DarkBlue
-                )
-            ) {
-                Text(
-                    text = "Войти",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                    color = White,
-                )
-            }
+                    .height(36.dp)
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Кнопка регистрации
-            Button(
-                onClick = onRegisterClick,
-                modifier = Modifier
+            CustomButton(
+                "Зарегистрироваться",
+                Grey,
+                Black,
+                onEnterClick,
+                Modifier
                     .padding(start = 64.dp, end = 64.dp)
                     .fillMaxWidth()
-                    .height(36.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Grey
-                )
-            ) {
-                Text(
-                    text = "Зарегистрироваться",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                    color = Black,
-                )
-            }
+                    .height(36.dp)
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
         }
