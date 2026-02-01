@@ -5,37 +5,23 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
-import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.sicampus.bootcamp2026.ui.theme.*
 import ru.sicampus.bootcamp2026.R
+import ru.sicampus.bootcamp2026.ui.components.CustomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,13 +41,16 @@ fun HomeScreen (
 
     var showViewTypeMenu by remember { mutableStateOf(true) }
 
+    var selectedItem by remember { mutableStateOf(0) }
+
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBarHome(
-                onHomeClick = {},
-                onCreateClick = onCreateMeetingClick,
-                onProfileClick = onProfileClick
+            CustomNavigationBar(
+                0,
+                {},
+                onCreateMeetingClick,
+                onProfileClick
             )
         }
     ) { paddingValues ->
@@ -172,9 +161,8 @@ fun EmptyMeetingsState(onCreateMeetingClick: () -> Unit){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Default.SearchOff,
-            //painter = painterResource(id = R.drawable.lupa_icon),
-            contentDescription = "No meetings",
+            painter = painterResource(id = R.drawable.zalupa),
+            contentDescription = "You have no meetings",
             modifier = Modifier.size(150.dp),
             tint = Black
         )
@@ -221,66 +209,6 @@ fun MeetingsListPlaceholder() {
     }
 }
 
-// Bottom navigation Bar
-@Composable
-fun BottomNavigationBarHome(
-    onHomeClick: () -> Unit = {},
-    onCreateClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
-){
-    NavigationBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(79.dp),
-        containerColor = White,
-        tonalElevation = 8.dp
-    ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Home",
-                    modifier = Modifier.size(45.dp),
-                    tint = DarkBlue
-                )
-            },
-            label = { Text("") },
-            selected = true,
-            onClick = onHomeClick,
-            modifier = Modifier.weight(1f)
-        )
-
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.AddCircleOutline,
-                    contentDescription = "Create",
-                    modifier = Modifier.size(45.dp),
-                    tint = IconsGrey
-                )
-            },
-            label = { Text("") },
-            selected = false,
-            onClick = onCreateClick,
-            modifier = Modifier.weight(1f)
-        )
-
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile",
-                    modifier = Modifier.size(45.dp),
-                    tint = IconsGrey
-                )
-            },
-            label = { Text("") },
-            selected = false,
-            onClick = onProfileClick,
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
 
 
 @Preview

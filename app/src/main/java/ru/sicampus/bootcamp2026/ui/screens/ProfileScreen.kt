@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.sicampus.bootcamp2026.ui.theme.*
 import ru.sicampus.bootcamp2026.R
+import ru.sicampus.bootcamp2026.ui.components.CustomNavigationBar
+import ru.sicampus.bootcamp2026.ui.components.CustomTextField
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +43,7 @@ fun ProfileScreen (
     onBackClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onExitClick: () -> Unit = {},
-    onCreateMeetingClick: () -> Unit = {},
+    onHomeClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
 
@@ -53,10 +55,11 @@ fun ProfileScreen (
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBarHome2(
-                onHomeClick = {},
-                onCreateClick = onCreateMeetingClick,
-                onProfileClick = {}
+            CustomNavigationBar(
+                2,
+                onHomeClick,
+                {},
+                onProfileClick
             )
         }
     ) { paddingValues ->
@@ -120,8 +123,7 @@ fun ProfileScreen (
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
 
@@ -134,29 +136,13 @@ fun ProfileScreen (
                         modifier = Modifier.padding(horizontal = 24.dp)
 
                     )
-                    TextField(
+
+                    //  Почта
+                    CustomTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = {
-                            Text(
-                                text = "email@ex.domain",
-                                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                                color = Black
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(start = 25.dp, end = 25.dp)
-                            .fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Black,
-                            unfocusedTextColor = Black,
-                            focusedContainerColor = Grey,
-                            unfocusedContainerColor = Grey,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(10.dp)
+                        label = "ooo.tmivdeneg@mail.com",
+                        Black
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -169,29 +155,13 @@ fun ProfileScreen (
                         modifier = Modifier.padding(horizontal = 24.dp)
 
                     )
-                    TextField(
+
+                    //  Отдел
+                    CustomTextField(
                         value = department,
                         onValueChange = { department = it },
-                        label = {
-                            Text(
-                                text = "отдел андроида",
-                                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                                color = Black
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(start = 25.dp, end = 25.dp)
-                            .fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Black,
-                            unfocusedTextColor = Black,
-                            focusedContainerColor = Grey,
-                            unfocusedContainerColor = Grey,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(10.dp)
+                        label = "Отдел Андроида",
+                        Black
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -204,29 +174,13 @@ fun ProfileScreen (
                         modifier = Modifier.padding(horizontal = 24.dp)
 
                     )
-                    TextField(
-                        value = position,
-                        onValueChange = { position = it },
-                        label = {
-                            Text(
-                                text = "гендир",
-                                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                                color = Black
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(start = 25.dp, end = 25.dp)
-                            .fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Black,
-                            unfocusedTextColor = Black,
-                            focusedContainerColor = Grey,
-                            unfocusedContainerColor = Grey,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(10.dp)
+
+                    //  Должность
+                    CustomTextField(
+                        position,
+                        {position = it},
+                        "гендир",
+                        Black
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -239,29 +193,13 @@ fun ProfileScreen (
                             color = TextGrey,
                             modifier = Modifier.padding(horizontal = 24.dp)
                         )
-                        TextField(
+
+                        //  Пароль
+                        CustomTextField(
                             value = password,
                             onValueChange = { password = it },
-                            label = {
-                                Text(
-                                    text = "••••••••",
-                                    fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                                    color = Black
-                                )
-                            },
-                            modifier = Modifier
-                                .padding(start = 25.dp, end = 25.dp)
-                                .fillMaxWidth(),
-                            singleLine = true,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Black,
-                                unfocusedTextColor = Black,
-                                focusedContainerColor = Grey,
-                                unfocusedContainerColor = Grey,
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent
-                            ),
-                            shape = RoundedCornerShape(10.dp)
+                            label = ". . . . . . . . ",
+                            Black
                         )
                     }
                 }
