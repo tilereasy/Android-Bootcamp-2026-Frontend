@@ -1,17 +1,12 @@
-package ru.sicampus.bootcamp2026.ui.screens
+package ru.sicampus.bootcamp2026.android.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.BorderColor
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
@@ -19,22 +14,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.sicampus.bootcamp2026.ui.theme.*
 import ru.sicampus.bootcamp2026.R
-import ru.sicampus.bootcamp2026.ui.components.CustomNavigationBar
-import ru.sicampus.bootcamp2026.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
+import ru.sicampus.bootcamp2026.android.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
+import ru.sicampus.bootcamp2026.android.ui.theme.Black
+import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
+import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
+import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
+import ru.sicampus.bootcamp2026.android.ui.theme.White
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +72,7 @@ fun ProfileScreen (
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(ru.sicampus.bootcamp2026.R.drawable.arrow_icon),
+                    painter = painterResource(R.drawable.arrow_icon),
                     contentDescription = "Назад",
                     tint = Black,
                     modifier = Modifier.size(30.dp)
@@ -94,7 +88,7 @@ fun ProfileScreen (
                 )
 
                 Icon(
-                    imageVector = Icons.Default.ExitToApp,
+                    painter = painterResource(R.drawable.close_icon),
                     contentDescription = "Выйти",
                     tint = Black,
                     modifier = Modifier.size(30.dp)

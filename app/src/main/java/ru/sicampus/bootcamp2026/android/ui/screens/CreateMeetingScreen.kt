@@ -1,6 +1,5 @@
-package ru.sicampus.bootcamp2026.ui.screens
+package ru.sicampus.bootcamp2026.android.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,8 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,12 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.sicampus.bootcamp2026.ui.theme.*
 import ru.sicampus.bootcamp2026.R
-import ru.sicampus.bootcamp2026.ui.components.CustomButton
-import ru.sicampus.bootcamp2026.ui.components.CustomNavigationBar
-import ru.sicampus.bootcamp2026.ui.components.CustomTextField
-import kotlin.contracts.contract
+import ru.sicampus.bootcamp2026.android.ui.components.CustomButton
+import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
+import ru.sicampus.bootcamp2026.android.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
+import ru.sicampus.bootcamp2026.android.ui.theme.Black
+import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
+import ru.sicampus.bootcamp2026.android.ui.theme.Grey
+import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
+import ru.sicampus.bootcamp2026.android.ui.theme.White
 
 @Composable
 fun CreateMeetingScreen(
