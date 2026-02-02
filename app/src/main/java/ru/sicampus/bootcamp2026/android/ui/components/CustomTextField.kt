@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.ui.components
+package ru.sicampus.bootcamp2026.android.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,7 +12,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import ru.sicampus.bootcamp2026.R
-import ru.sicampus.bootcamp2026.ui.theme.*
+import ru.sicampus.bootcamp2026.android.ui.theme.Black
+import ru.sicampus.bootcamp2026.android.ui.theme.Grey
 
 
 @Composable

@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.ui.screens
+package ru.sicampus.bootcamp2026.android.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,10 +14,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.sicampus.bootcamp2026.ui.theme.*
 import ru.sicampus.bootcamp2026.R
-import ru.sicampus.bootcamp2026.ui.components.CustomButton
-import ru.sicampus.bootcamp2026.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.components.CustomButton
+import ru.sicampus.bootcamp2026.android.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
+import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
+import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
+import ru.sicampus.bootcamp2026.android.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.ui.screens
+package ru.sicampus.bootcamp2026.android.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,9 +19,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.sicampus.bootcamp2026.ui.theme.*
 import ru.sicampus.bootcamp2026.R
-import ru.sicampus.bootcamp2026.ui.components.CustomNavigationBar
+import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
+import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
+import ru.sicampus.bootcamp2026.android.ui.theme.Black
+import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
+import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
+import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

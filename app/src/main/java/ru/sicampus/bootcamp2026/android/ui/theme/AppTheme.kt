@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.ui.theme
+package ru.sicampus.bootcamp2026.android.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
