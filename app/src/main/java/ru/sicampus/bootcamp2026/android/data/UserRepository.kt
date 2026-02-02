@@ -11,8 +11,7 @@ class UserRepository(
             listDTO.mapNotNull{ userDTO ->
                UserEntity (
                    name = userDTO.name ?: return@mapNotNull null,
-                   email = userDTO.email ?: return@mapNotNull null,
-                   photoUrl = userDTO.photoUrl ?: return@mapNotNull null
+                   email = userDTO.email ?: return@mapNotNull null
                    )
 
             }
