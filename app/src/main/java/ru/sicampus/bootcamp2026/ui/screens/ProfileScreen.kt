@@ -209,67 +209,6 @@ fun ProfileScreen (
 }
 
 
-// Bottom navigation Bar2 потом в отдельный компонент и тд
-@Composable
-fun BottomNavigationBarHome2(
-    onHomeClick: () -> Unit = {},
-    onCreateClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
-){
-    NavigationBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(79.dp),
-        containerColor = White,
-        tonalElevation = 8.dp
-    ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Home",
-                    modifier = Modifier.size(45.dp),
-                    tint = IconsGrey
-                )
-            },
-            label = { Text("") },
-            selected = false,
-            onClick = onHomeClick,
-            modifier = Modifier.weight(1f)
-        )
-
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.AddCircleOutline,
-                    contentDescription = "Create",
-                    modifier = Modifier.size(45.dp),
-                    tint = IconsGrey
-                )
-            },
-            label = { Text("") },
-            selected = false,
-            onClick = onCreateClick,
-            modifier = Modifier.weight(1f)
-        )
-
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile",
-                    modifier = Modifier.size(45.dp),
-                    tint = DarkBlue
-                )
-            },
-            label = { Text("") },
-            selected = true,
-            onClick = onProfileClick,
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
-
 @Preview
 @Composable
 fun ShowProfileScreen(){
