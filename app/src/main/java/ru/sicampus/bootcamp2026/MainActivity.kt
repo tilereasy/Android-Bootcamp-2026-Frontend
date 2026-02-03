@@ -17,15 +17,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-//            Box(
-//                Modifier.fillMaxSize()
-//            )
-//            {
-//                ListScreen()
-//            }
             AppTheme {
                 Box(
-                    Modifier.fillMaxSize(),
+                    Modifier.fillMaxSize()
                 ) {
                     ListScreen()
                 }

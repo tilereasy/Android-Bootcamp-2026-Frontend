@@ -1,10 +1,6 @@
 package ru.sicampus.bootcamp2026.android.domain.entities
 
-
-class UserEntity(
+data class UserEntity(
     val name: String,
-    val email: String,
-    val photoUrl: String,
-){
-
-}
+    val email: String
+)

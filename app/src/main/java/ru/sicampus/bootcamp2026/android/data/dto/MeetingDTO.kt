@@ -1,6 +1,5 @@
 package ru.sicampus.bootcamp2026.android.data.dto
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,5 +10,5 @@ data class MeetingDTO(
     val description: String,
     val startAt: String,
     val endAt: String,
-    val createdAt: String? = null
+    val createdAt: String
 )
