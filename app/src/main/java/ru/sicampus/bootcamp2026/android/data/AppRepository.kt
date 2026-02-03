@@ -4,7 +4,7 @@ import ru.sicampus.bootcamp2026.android.data.dto.InvitationDTO
 import ru.sicampus.bootcamp2026.android.data.dto.MeetingDTO
 import ru.sicampus.bootcamp2026.android.data.mapper.toEntity
 import ru.sicampus.bootcamp2026.android.data.source.ApiDataSource
-import ru.sicampus.bootcamp2026.android.domain.entities.UserEntity
+import ru.sicampus.bootcamp2026.android.domain.list.entities.UserEntity
 
 class AppRepository(
     private val api: ApiDataSource
