@@ -1,22 +1,14 @@
 package ru.sicampus.bootcamp2026.android.ui.testScreen.list
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
-import okhttp3.internal.userAgent
 
 @Composable
 fun ListScreen(
@@ -24,24 +16,20 @@ fun ListScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    when(val currentState = state){
+    when (val currentState = state) {
         is ListState.Content -> ListContentState(currentState)
-        is ListState.Error -> ListErrorState(currentState, onRefresh = {viewModel.getData()})
+        is ListState.Error -> ListErrorState(currentState, onRefresh = { viewModel.getData() })
         ListState.Loading -> ListLoadingState()
     }
-
 }
 
-
 @Composable
-private fun ListLoadingState(){
+private fun ListLoadingState() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ){
-        CircularProgressIndicator(
-            modifier = Modifier.size(48.dp)
-        )
+    ) {
+        CircularProgressIndicator(modifier = Modifier.size(48.dp))
     }
 }
 
@@ -49,42 +37,33 @@ private fun ListLoadingState(){
 private fun ListErrorState(
     state: ListState.Error,
     onRefresh: () -> Unit
-){
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ){
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(state.reason)
-            Button(onClick = onRefresh){
-                Text("Обновить")
-            }
+            Spacer(Modifier.height(8.dp))
+            Button(onClick = onRefresh) { Text("Обновить") }
         }
     }
 }
 
 @Composable
-private fun ListContentState(
-    state: ListState.Content,
-){
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+private fun ListContentState(state: ListState.Content) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        state.users.forEach { user ->
-            Row{
-                AsyncImage(
-                    model = user.photoUrl,
-                    contentDescription = "Фото профиля",
-                )
-                Column{
-                    Text(user.name) // name
-                    Text(user.email) // email
+        items(state.users) { user ->
+            Card {
+                Column(Modifier.padding(12.dp)) {
+                    Text(user.name, style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(4.dp))
+                    Text(user.email, style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
-
     }
 }
