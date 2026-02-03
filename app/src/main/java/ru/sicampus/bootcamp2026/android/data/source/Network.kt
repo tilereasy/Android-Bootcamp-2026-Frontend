@@ -14,8 +14,11 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 object Network {
-    const val HOST = "http://10.0.2.2:8080"
+    //const val HOST = "http://10.0.2.2:8080" // вариант для эмулятора
+    const val HOST = "http://192.168.1.64:8080" // вариант для телефона по usb, это у НастиВ
     const val BASE_URL = "$HOST/api"
+
+
 
     val client by lazy {
         HttpClient(CIO) {
