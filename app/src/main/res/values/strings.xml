@@ -14,6 +14,8 @@
     <string name="confirm_password">Подтвердите пароль</string>
     <string name="change_password">Сменить пароль</string>
 
+    <string name="sign_in_failed">Неверный логин или пароль</string>
+
     <string name="day">День</string>
     <string name="month">Месяц</string>
     <string name="year">Год</string>
