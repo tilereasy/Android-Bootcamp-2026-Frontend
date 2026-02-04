@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
+package ru.sicampus.bootcamp2026.android.ui.testScreens.home
 
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
@@ -20,17 +22,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
 import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
-import ru.sicampus.bootcamp2026.android.ui.theme.Black
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
 import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
 import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
@@ -50,8 +53,7 @@ private enum class HomeViewType(val title: String) {
 @Composable
 fun HomeScreen(
     onNotificationsClick: () -> Unit = {},
-    onCreateMeetingClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    navController: NavHostController,
 ) {
     var viewType by remember { mutableStateOf(HomeViewType.WEEK) }
     var showViewTypeMenu by remember { mutableStateOf(false) }
@@ -76,10 +78,7 @@ fun HomeScreen(
     Scaffold(
         bottomBar = {
             CustomNavigationBar(
-                selectedItem = 0,
-                onHomeClick = {},
-                onCreateMeetingClick = onCreateMeetingClick,
-                onProfileClick = onProfileClick
+                navController = navController
             )
         }
     ) { paddingValues ->
@@ -89,6 +88,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(Color.White)
+                .verticalScroll(rememberScrollState())
         ) {
 
             // верхняя строка
@@ -280,7 +280,7 @@ private fun PeriodNavRow(
         Text(
             text = title,
             modifier = Modifier.weight(1f),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            textAlign = TextAlign.Center,
             fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
             fontSize = 16.sp,
             color = DarkBlue
@@ -434,10 +434,3 @@ private fun formatDayTitle(d: LocalDate): String {
     return "$dow, ${formatShortDate(d)}"
 }
 
-@Preview
-@Composable
-fun ShowHomeScreen() {
-    AppTheme {
-        HomeScreen()
-    }
-}

@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
+package ru.sicampus.bootcamp2026.android.ui.screenSchemes
 //
 //import androidx.compose.foundation.layout.*
 //import androidx.compose.material3.*

@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
+package ru.sicampus.bootcamp2026.android.ui.screenSchemes
 //
 //import androidx.compose.foundation.border
 //import androidx.compose.foundation.clickable
@@ -42,10 +42,7 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //    Scaffold(
 //        bottomBar = {
 //            CustomNavigationBar(
-//                1,
-//                onHomeClick,
-//                {},
-//                onProfileClick
+//                navController = nav
 //            )
 //        }
 //    ) { paddingValues ->
@@ -81,6 +78,7 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //                value = meetingName,
 //                onValueChange = { meetingName = it },
 //                label = "Название встречи",
+//                modifier = Modifier,
 //                TextGrey
 //            )
 //
@@ -91,6 +89,7 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //                value = description,
 //                onValueChange = { description = it },
 //                label = "Описание",
+//                modifier = Modifier,
 //                TextGrey
 //            )
 //

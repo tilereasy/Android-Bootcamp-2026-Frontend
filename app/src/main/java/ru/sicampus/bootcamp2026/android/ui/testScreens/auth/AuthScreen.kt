@@ -109,9 +109,14 @@ private fun Content(
 
     CustomTextField(
         value = inputLogin,
-        onValueChange = {
-            inputLogin = it
-            viewModel.onIntent(AuthIntent.TextInput(it, inputPassword))
+        onValueChange = { newLogin ->
+            inputLogin = newLogin
+            viewModel.onIntent(
+                AuthIntent.TextInput(
+                    newLogin,
+                    inputPassword
+                )
+            )
         },
         label = stringResource(R.string.email_text),
         modifier = Modifier,
@@ -126,9 +131,14 @@ private fun Content(
 
     CustomTextField(
         value = inputPassword,
-        onValueChange = {
-            inputPassword = it
-            viewModel.onIntent(AuthIntent.TextInput(inputLogin, it))
+        onValueChange = { newPassword ->
+            inputPassword = newPassword
+            viewModel.onIntent(
+                AuthIntent.TextInput(
+                    inputLogin,
+                    newPassword
+                )
+            )
         },
         label = stringResource(R.string.password_text),
         modifier = Modifier,

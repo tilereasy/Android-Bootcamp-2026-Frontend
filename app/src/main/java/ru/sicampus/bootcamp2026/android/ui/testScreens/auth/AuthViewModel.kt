@@ -14,8 +14,8 @@ import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.data.source.AuthNetworkDataSource
 import ru.sicampus.bootcamp2026.android.domain.auth.CheckAndSaveAuthUseCase
 import ru.sicampus.bootcamp2026.android.domain.auth.CheckAuthFormatUseCase
-import ru.sicampus.bootcamp2026.android.ui.nav.ListRoute
 import ru.innovationcampus.android.ui.screen.auth.AuthState
+import ru.sicampus.bootcamp2026.android.ui.nav.HomeRoute
 
 class AuthViewModel : ViewModel() {
     private val checkAuthFormatUseCase by lazy { CheckAuthFormatUseCase() }
@@ -46,7 +46,7 @@ class AuthViewModel : ViewModel() {
                     checkAndSaveAuthCodeUseCase.invoke(intent.login, intent.password).fold(
                         onSuccess = {
                             _actionFlow.emit(
-                                AuthAction.OpenScreen(ListRoute)
+                                AuthAction.OpenScreen(HomeRoute)
                             )
                         },
                         onFailure = { error ->

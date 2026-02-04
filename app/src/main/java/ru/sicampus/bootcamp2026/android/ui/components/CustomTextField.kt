@@ -37,10 +37,12 @@ fun CustomTextField(
     focusRequester: FocusRequester? = null,
     keyboardActionOnNext: (KeyboardActionScope.() -> Unit)? = null,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)? = null,
+    enabled: Boolean = true
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
+        enabled = enabled,
 
         label = {
             Text(
