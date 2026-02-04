@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
+    kotlin("plugin.serialization") version "2.3.0"
 }
 
 android {
@@ -44,49 +44,21 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.bundles.ktor)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.bundles.coil)
-    implementation(libs.androidx.material.icons.extended)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material)
 
-    // Базовый UI Compose
-    implementation("androidx.compose.ui:ui")
-
-    // Material 3 (кнопки, текст, топбары)
-    implementation("androidx.compose.material3:material3")
-
-    // Preview в андроид студио
-    implementation("androidx.compose.ui:ui-tooling-preview")
-
-    // Для доп иконок
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
-
-    // Для @Preview
-    debugImplementation("androidx.compose.ui:ui-tooling")
-
-    // Интеграция Compose с Activity
-    implementation("androidx.activity:activity-compose:1.12.2")
-
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
+    implementation(libs.bundles.coil)
+    implementation(libs.bundles.ktor)
+    implementation(libs.kotlinx.serialization.json)
 }

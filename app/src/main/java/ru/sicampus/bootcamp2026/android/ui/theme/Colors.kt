@@ -13,3 +13,5 @@ val IconsGrey = Color(0xFFC5C5C5)
 val TextGrey = Color(0xFF686868)
 
 val White = Color(0xFFFFFFFF)
+
+val ErrorRed = Color(0xFF921E1E)
