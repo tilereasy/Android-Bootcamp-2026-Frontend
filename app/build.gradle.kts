@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.sicampus.bootcamp2026"
-        minSdk = 25
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -61,4 +61,7 @@ dependencies {
     implementation(libs.bundles.coil)
     implementation(libs.bundles.ktor)
     implementation(libs.kotlinx.serialization.json)
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
 }
