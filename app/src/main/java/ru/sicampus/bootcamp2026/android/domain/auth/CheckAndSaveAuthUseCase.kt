@@ -1,6 +1,6 @@
 package ru.sicampus.bootcamp2026.android.domain.auth
 
-import ru.innovationcampus.android.data.AuthRepository
+import ru.sicampus.bootcamp2026.android.data.AuthRepository
 
 class CheckAndSaveAuthUseCase(
     private val authRepository: AuthRepository

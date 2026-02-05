@@ -59,6 +59,7 @@ fun CreateMeetingScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(150.dp))
 
             Text(
                 text = "Создание встречи",

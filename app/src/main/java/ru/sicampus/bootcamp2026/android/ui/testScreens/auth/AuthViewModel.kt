@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.innovationcampus.android.data.AuthRepository
+import ru.sicampus.bootcamp2026.android.data.AuthRepository
 import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.data.source.AuthNetworkDataSource
 import ru.sicampus.bootcamp2026.android.domain.auth.CheckAndSaveAuthUseCase
 import ru.sicampus.bootcamp2026.android.domain.auth.CheckAuthFormatUseCase
-import ru.innovationcampus.android.ui.screen.auth.AuthState
 import ru.sicampus.bootcamp2026.android.ui.nav.HomeRoute
+import ru.sicampus.bootcamp2026.android.ui.nav.SignUpRoute
 
 class AuthViewModel : ViewModel() {
     private val checkAuthFormatUseCase by lazy { CheckAuthFormatUseCase() }
@@ -68,6 +68,14 @@ class AuthViewModel : ViewModel() {
                             intent.password
                         ),
                         error = null
+                    )
+                }
+            }
+
+            is AuthIntent.NavigateToSignUp -> {
+                viewModelScope.launch {
+                    _actionFlow.emit(
+                        AuthAction.OpenScreen(SignUpRoute)
                     )
                 }
             }
