@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
+package ru.sicampus.bootcamp2026.android.ui.screenSchemes
 //
 //import androidx.compose.foundation.layout.*
 //import androidx.compose.foundation.layout.Arrangement
@@ -6,14 +6,12 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //import androidx.compose.foundation.verticalScroll
 //import androidx.compose.material.icons.Icons
 //import androidx.compose.material.icons.filled.AccountCircle
-//import androidx.compose.material.icons.filled.AddCircleOutline
 //import androidx.compose.material.icons.filled.Edit
-//import androidx.compose.material.icons.filled.ExitToApp
-//import androidx.compose.material.icons.filled.Menu
 //import androidx.compose.material3.*
 //import androidx.compose.runtime.*
 //import androidx.compose.ui.Alignment
 //import androidx.compose.ui.Modifier
+//import androidx.compose.ui.modifier.modifierLocalConsumer
 //import androidx.compose.ui.res.painterResource
 //import androidx.compose.ui.text.font.Font
 //import androidx.compose.ui.text.font.FontFamily
@@ -26,9 +24,7 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
 //import ru.sicampus.bootcamp2026.android.ui.theme.Black
 //import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
-//import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
 //import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
-//import ru.sicampus.bootcamp2026.android.ui.theme.White
 //
 //
 //@OptIn(ExperimentalMaterial3Api::class)
@@ -68,24 +64,19 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //                modifier = Modifier
 //                    .fillMaxWidth()
 //                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
+//                horizontalArrangement = Arrangement.End,
 //            ) {
-//                Icon(
-//                    painter = painterResource(R.drawable.arrow_icon),
-//                    contentDescription = "Назад",
-//                    tint = Black,
-//                    modifier = Modifier.size(30.dp)
-//                )
 //
-//                Spacer(modifier = Modifier.width(200.dp))
 //
 //                Icon(
 //                    imageVector = Icons.Default.Edit,
 //                    contentDescription = "Изменить профиль",
 //                    tint = Black,
-//                    modifier = Modifier.size(30.dp)
+//                    modifier = Modifier
+//                        .size(30.dp)
 //                )
+//
+//                Spacer(modifier = Modifier.width(30.dp))
 //
 //                Icon(
 //                    painter = painterResource(R.drawable.close_icon),
@@ -136,6 +127,7 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //                        value = email,
 //                        onValueChange = { email = it },
 //                        label = "ooo.tmivdeneg@mail.com",
+//                        modifier = Modifier,
 //                        Black
 //                    )
 //
@@ -155,6 +147,7 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //                        value = department,
 //                        onValueChange = { department = it },
 //                        label = "Отдел Андроида",
+//                        modifier = Modifier,
 //                        Black
 //                    )
 //
@@ -174,7 +167,8 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //                        position,
 //                        {position = it},
 //                        "гендир",
-//                        Black
+//                        modifier = Modifier,
+//                        textColor = Black
 //                    )
 //
 //                    Spacer(modifier = Modifier.height(16.dp))
@@ -193,7 +187,8 @@ package ru.sicampus.bootcamp2026.android.ui.ScreenSchemes
 //                            value = password,
 //                            onValueChange = { password = it },
 //                            label = ". . . . . . . . ",
-//                            Black
+//                            textColor = Black,
+//                            modifier = Modifier
 //                        )
 //                    }
 //                }
