@@ -59,15 +59,7 @@ fun CreateMeetingScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                painter = painterResource(R.drawable.arrow_icon),
-                contentDescription = "Назад",
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(top = 46.dp, start = 24.dp)
-            )
-
-            Spacer(modifier = Modifier.height(87.dp))
+            Spacer(modifier = Modifier.height(150.dp))
 
             Text(
                 text = "Создание встречи",
