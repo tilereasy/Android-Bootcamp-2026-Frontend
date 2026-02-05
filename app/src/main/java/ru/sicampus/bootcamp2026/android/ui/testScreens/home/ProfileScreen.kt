@@ -1,5 +1,6 @@
 package ru.sicampus.bootcamp2026.android.ui.testScreens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +23,8 @@ import androidx.navigation.NavHostController
 import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
 import ru.sicampus.bootcamp2026.android.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.nav.AuthRoute
+import ru.sicampus.bootcamp2026.android.ui.testScreens.signUp.SignUpIntent
 import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
 import ru.sicampus.bootcamp2026.android.ui.theme.Black
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
@@ -30,7 +33,7 @@ import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen (
+fun ProfileScreen(
     onEditClick: () -> Unit = {},
     onExitClick: () -> Unit = {},
     navController: NavHostController
@@ -71,16 +74,20 @@ fun ProfileScreen (
                     modifier = Modifier
                         .size(30.dp),
 
-                )
+                    )
 
                 Spacer(modifier = Modifier.width(30.dp))
 
-                Icon(
-                    painter = painterResource(R.drawable.close_icon),
-                    contentDescription = "Выйти",
-                    tint = Black,
+                IconButton(
+                    onClick = onExitClick,
                     modifier = Modifier.size(30.dp)
-                )
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.log_out_icon),
+                        contentDescription = "Выйти",
+                        tint = Black,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(140.dp))
@@ -157,7 +164,7 @@ fun ProfileScreen (
                     //  Должность
                     CustomTextField(
                         position,
-                        {position = it},
+                        { position = it },
                         "гендир",
                         modifier = Modifier,
                         textColor = Black,

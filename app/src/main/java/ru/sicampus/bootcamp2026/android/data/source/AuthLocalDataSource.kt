@@ -40,6 +40,17 @@ object AuthLocalDataSource {
         _cacheToken = null
     }
 
+    suspend fun logout() {
+        _cacheToken = null
+        isInit = false
+        App.context.dataStore.updateData { prefs ->
+            prefs.toMutablePreferences().also { preferences ->
+                preferences.remove(TOKEN)
+            }
+        }
+    }
+
+
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private val TOKEN = stringPreferencesKey("token")
 }

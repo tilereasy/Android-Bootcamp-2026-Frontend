@@ -18,14 +18,16 @@ fun CustomButton (
     containerColor: Color,
     textColor: Color,
     onClick: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
+    enabled: Boolean = true
 ){
     Button(
         onClick = onClick,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor
-        )
+        ),
+        enabled = enabled
     ) {
         Text(
             text = text,
