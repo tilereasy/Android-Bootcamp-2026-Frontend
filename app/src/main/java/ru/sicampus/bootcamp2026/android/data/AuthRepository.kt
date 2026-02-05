@@ -1,4 +1,4 @@
-package ru.innovationcampus.android.data
+package ru.sicampus.bootcamp2026.android.data
 
 import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.data.source.AuthNetworkDataSource
@@ -20,5 +20,10 @@ class AuthRepository(
                 authLocalDataSource.clearToken()
             }
     }
+
+    suspend fun logout() {
+        authLocalDataSource.logout()
+    }
+
 
 }

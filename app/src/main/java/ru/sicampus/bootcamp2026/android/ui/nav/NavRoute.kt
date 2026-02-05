@@ -1,17 +1,21 @@
 package ru.sicampus.bootcamp2026.android.ui.nav
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.ui.testScreens.auth.AuthScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.HomeScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.CreateMeetingScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.home.NotificationScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.ProfileScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.signUp.SignUpScreen
 
 @Composable
 fun NavigationGraph(
@@ -32,11 +36,20 @@ fun NavigationGraph(
             )
         }
 
+        // Экран регистрации
+        composable<SignUpRoute> {
+            SignUpScreen(
+                navController = navController
+            )
+        }
+
         // Главный экран
         composable<HomeRoute> {
             HomeScreen(
                 navController = navController,
-                onNotificationsClick = {}
+                onNotificationsClick = {
+                    navController.navigate(NotificationsRoute)
+                }
             )
         }
 
@@ -49,10 +62,30 @@ fun NavigationGraph(
 
         // Экран профиля
         composable<ProfileRoute> {
+            val coroutineScope = rememberCoroutineScope()
+
             ProfileScreen(
                 navController = navController,
                 onEditClick = {},
-                onExitClick = {},
+                onExitClick = {
+                    coroutineScope.launch {
+                        AuthLocalDataSource.logout()
+
+                        navController.navigate(AuthRoute) {
+                            popUpTo(0) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                },
+            )
+        }
+
+        composable<NotificationsRoute>{
+            NotificationScreen (
+                onExitClick = {
+                    navController.popBackStack()
+                }
             )
         }
     }
