@@ -42,6 +42,8 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import androidx.compose.foundation.combinedClickable
+
 
 
 private enum class HomeViewType(val title: String) {
@@ -65,15 +67,18 @@ fun HomeScreen(
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
-    // кружочек с кол-во встреч
+    // создание фейк встреч
     val meetingsCountByDate = remember {
+        val today = LocalDate.now()
         mapOf(
-            LocalDate.now() to 2,
-            LocalDate.now().plusDays(1) to 1,
-            LocalDate.now().plusDays(2) to 3,
-            LocalDate.now().minusDays(2) to 1
+            today to 2,
+            today.plusDays(1) to 5,
+            today.plusDays(2) to 6,
+            today.plusDays(3) to 10,
+            today.minusDays(2) to 1
         )
     }
+
 
     Scaffold(
         bottomBar = {
@@ -116,19 +121,35 @@ fun HomeScreen(
 
                     DropdownMenu(
                         expanded = showViewTypeMenu,
-                        onDismissRequest = { showViewTypeMenu = false }
+                        onDismissRequest = { showViewTypeMenu = false },
+                        containerColor = Color.White,
+                        tonalElevation = 4.dp,
+                        shadowElevation = 8.dp
                     ) {
                         HomeViewType.entries.forEach { option ->
                             DropdownMenuItem(
-                                text = { Text(option.title) },
+                                text = {
+                                    Text(
+                                        option.title,
+                                        color = DarkBlue,
+                                        fontFamily = FontFamily(Font(R.font.open_sans_semibold))
+                                    )
+                                },
                                 onClick = {
                                     viewType = option
                                     showViewTypeMenu = false
                                     selectedDate = anchorDate
-                                }
+                                },
+                                colors = MenuDefaults.itemColors(
+                                    textColor = DarkBlue,
+                                    leadingIconColor = DarkBlue,
+                                    trailingIconColor = DarkBlue,
+                                    disabledTextColor = TextGrey
+                                )
                             )
                         }
                     }
+
                 }
 
                 IconButton(onClick = onNotificationsClick) {
@@ -195,8 +216,28 @@ fun HomeScreen(
                 }
 
                 HomeViewType.MONTH -> {
-                    MonthHeaderPlaceholder(anchorDate)
+                    MonthCalendar(
+                        anchorDate = anchorDate,
+                        selectedDate = selectedDate,
+                        meetingsCountByDate = meetingsCountByDate,
+                        onSelectDate = { date ->
+                            selectedDate = date // одиночный клик
+                        },
+                        onDoubleClickDate = { date ->
+                            selectedDate = date
+                            anchorDate = date
+                            viewType = HomeViewType.WEEK // двойной клик
+                        }
+                    )
+
+                    Spacer(Modifier.height(12.dp))
+
+                    MeetingsForDay(
+                        date = selectedDate,
+                        count = meetingsCountByDate[selectedDate] ?: 0
+                    )
                 }
+
             }
         }
     }
@@ -209,7 +250,7 @@ private fun MeetingsForDay(
     count: Int
 ) {
     val meetings = remember(date, count) {
-        List(count.coerceAtMost(3)) { idx ->
+        List(count.coerceAtMost(6)) { idx ->
             MeetingUi(
                 organizerName = "Организатор",
                 title = "Встреча ${idx + 1}",
@@ -219,6 +260,7 @@ private fun MeetingsForDay(
             )
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -375,8 +417,11 @@ private fun WeekDayItem(
                 Text(
                     text = if (count > 9) "9+" else count.toString(),
                     fontSize = 10.sp,
+                    lineHeight = 10.sp,
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.offset(y = (-0.5).dp)
                 )
             }
         }
@@ -393,18 +438,179 @@ private fun WeekDayItem(
     }
 }
 
-//TODO: месяц заглушка
+//TODO: месяц заглушка есть но без реальных данных
 @Composable
-private fun MonthHeaderPlaceholder(anchorDate: LocalDate) {
-    val ym = YearMonth.from(anchorDate)
-    Text(
-        text = "Месяц: ${ym.month.getDisplayName(TextStyle.FULL, Locale("ru"))} ${ym.year}",
-        modifier = Modifier.padding(horizontal = 16.dp),
-        fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-        fontSize = 16.sp,
-        color = DarkBlue
-    )
+private fun MonthCalendar(
+    anchorDate: LocalDate,
+    selectedDate: LocalDate,
+    meetingsCountByDate: Map<LocalDate, Int>,
+    onSelectDate: (LocalDate) -> Unit,
+    onDoubleClickDate: (LocalDate) -> Unit
+) {
+    val ym = remember(anchorDate) { YearMonth.from(anchorDate) }
+    val firstOfMonth = remember(ym) { ym.atDay(1) }
+    val daysInMonth = remember(ym) { ym.lengthOfMonth() }
+
+    val leadingEmpty = remember(firstOfMonth) { firstOfMonth.dayOfWeek.value - DayOfWeek.MONDAY.value }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .border(1.dp, TextGrey.copy(alpha = 0.35f), RoundedCornerShape(16.dp))
+            .padding(12.dp)
+    ) {
+        MonthWeekHeader()
+
+        Spacer(Modifier.height(8.dp))
+
+        val totalCells = leadingEmpty + daysInMonth
+        val rows = ((totalCells + 6) / 7)
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            for (row in 0 until rows) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    for (col in 0..6) {
+                        val cellIndex = row * 7 + col
+                        val dayNumber = cellIndex - leadingEmpty + 1
+
+                        if (dayNumber < 1 || dayNumber > daysInMonth) {
+                            MonthEmptyCell()
+                        } else {
+                            val date = ym.atDay(dayNumber)
+                            val count = meetingsCountByDate[date] ?: 0
+
+                            MonthDayCell(
+                                date = date,
+                                count = count,
+                                isSelected = date == selectedDate,
+                                isToday = date == LocalDate.now(),
+                                onClick = { onSelectDate(date) },
+                                onDoubleClick = { onDoubleClickDate(date) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
+@Composable
+private fun MonthWeekHeader() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        val days = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
+        days.forEach { d ->
+            Text(
+                text = d,
+                modifier = Modifier.width(40.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
+                color = TextGrey,
+                fontFamily = FontFamily(Font(R.font.open_sans_semibold))
+            )
+        }
+    }
+}
+
+@Composable
+private fun MonthEmptyCell() {
+    Box(modifier = Modifier.size(40.dp))
+}
+
+@Composable
+private fun MonthDayCell(
+    date: LocalDate,
+    count: Int,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: () -> Unit,
+    onDoubleClick: () -> Unit
+) {
+    val bg = when {
+        isSelected -> DarkBlue.copy(alpha = 0.12f)
+        else -> Color.Transparent
+    }
+
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(bg)
+            .combinedClickable(
+                onClick = onClick,
+                onDoubleClick = onDoubleClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        // число
+        Text(
+            text = date.dayOfMonth.toString(),
+            fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.open_sans_extrabold)),
+            color = DarkBlue
+        )
+
+        // точки встреч снизу (1 - 5 точки, если >5 то показываем полоску внизу
+        if (count > 0) {
+            val maxDots = 5
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 4.dp)
+                    .height(4.dp)
+                    .fillMaxWidth(0.9f),
+                contentAlignment = Alignment.Center
+            ) {
+                if (count <= maxDots) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(count) {
+                            Box(
+                                modifier = Modifier
+                                    .size(4.dp)
+                                    .clip(CircleShape)
+                                    .background(DarkBlue)
+                            )
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(DarkBlue)
+                    )
+                }
+            }
+        }
+
+
+        // маркер "сегодня" (маленькая точка в углу)
+        if (isToday) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 4.dp, end = 4.dp)
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(Color.Red)
+            )
+        }
+    }
+}
+
+
 
 
 private fun startOfWeek(date: LocalDate): LocalDate {
