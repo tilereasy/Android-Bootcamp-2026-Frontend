@@ -67,7 +67,7 @@ fun HomeScreen(
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
-    // создание фейк встреч
+    // создание фейк встреч.
     val meetingsCountByDate = remember {
         val today = LocalDate.now()
         mapOf(
