@@ -26,14 +26,11 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
-import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
 import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
 import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
@@ -43,7 +40,12 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 import androidx.compose.foundation.combinedClickable
-
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 
 
 private enum class HomeViewType(val title: String) {
@@ -68,16 +70,26 @@ fun HomeScreen(
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     // создание фейк встреч.
-    val meetingsCountByDate = remember {
-        val today = LocalDate.now()
-        mapOf(
-            today to 2,
-            today.plusDays(1) to 5,
-            today.plusDays(2) to 6,
-            today.plusDays(3) to 10,
-            today.minusDays(2) to 1
-        )
+//    val meetingsCountByDate = remember {
+//        val today = LocalDate.now()
+//        mapOf(
+//            today to 2,
+//            today.plusDays(1) to 5,
+//            today.plusDays(2) to 6,
+//            today.plusDays(3) to 10,
+//            today.minusDays(2) to 1
+//        )
+//    }
+
+    // СОЗДАНИЕ РЕАЛЬНЫХ ВСТРЕЧ
+    val viewModel: HomeViewModel = viewModel()
+    val state by viewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        val start = startOfWeek(anchorDate)
+        viewModel.loadWeek(start)
+        viewModel.loadFirstPage(selectedDate)
     }
+
 
 
     Scaffold(
@@ -93,7 +105,6 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(Color.White)
-                .verticalScroll(rememberScrollState())
         ) {
 
             // верхняя строка
@@ -175,22 +186,32 @@ fun HomeScreen(
                 }
             }
 
-            PeriodNavRow(
+            PeriodNavRow( //TODO: здесь тоже в разделе месяца замена
                 viewType = viewType,
                 anchorDate = anchorDate,
                 onPrev = {
-                    anchorDate = when (viewType) {
+                    val newAnchor = when (viewType) {
                         HomeViewType.WEEK -> anchorDate.minusWeeks(1)
                         HomeViewType.MONTH -> anchorDate.minusMonths(1)
                     }
-                    selectedDate = clampSelectedDate(viewType, anchorDate, selectedDate)
+
+                    anchorDate = newAnchor
+                    selectedDate = clampSelectedDate(viewType, newAnchor, selectedDate)
+
+                    val start = startOfWeek(newAnchor)
+                    viewModel.loadWeek(start)
                 },
                 onNext = {
-                    anchorDate = when (viewType) {
+                    val newAnchor = when (viewType) {
                         HomeViewType.WEEK -> anchorDate.plusWeeks(1)
                         HomeViewType.MONTH -> anchorDate.plusMonths(1)
                     }
-                    selectedDate = clampSelectedDate(viewType, anchorDate, selectedDate)
+
+                    anchorDate = newAnchor
+                    selectedDate = clampSelectedDate(viewType, newAnchor, selectedDate)
+
+                    val start = startOfWeek(newAnchor)
+                    viewModel.loadWeek(start)
                 }
             )
 
@@ -203,15 +224,18 @@ fun HomeScreen(
                     WeekStrip(
                         weekStart = weekStart,
                         selectedDate = selectedDate,
-                        meetingsCountByDate = meetingsCountByDate,
-                        onSelectDate = { selectedDate = it }
+                        meetingsCountByDate = state.weekCountsByDate,
+                        onSelectDate = {
+                            selectedDate = it
+                            viewModel.loadFirstPage(it)
+                        }
                     )
 
                     Spacer(Modifier.height(12.dp))
 
                     MeetingsForDay(
-                        date = selectedDate,
-                        count = meetingsCountByDate[selectedDate] ?: 0
+                        state = state,
+                        onLoadNext = { viewModel.loadNextPage() }
                     )
                 }
 
@@ -219,9 +243,10 @@ fun HomeScreen(
                     MonthCalendar(
                         anchorDate = anchorDate,
                         selectedDate = selectedDate,
-                        meetingsCountByDate = meetingsCountByDate,
+                        meetingsCountByDate = state.weekCountsByDate, //TODO: заменить на месяц потом
                         onSelectDate = { date ->
                             selectedDate = date // одиночный клик
+                            viewModel.loadFirstPage(date)
                         },
                         onDoubleClickDate = { date ->
                             selectedDate = date
@@ -233,11 +258,10 @@ fun HomeScreen(
                     Spacer(Modifier.height(12.dp))
 
                     MeetingsForDay(
-                        date = selectedDate,
-                        count = meetingsCountByDate[selectedDate] ?: 0
+                        state = state,
+                        onLoadNext = { viewModel.loadNextPage() }
                     )
                 }
-
             }
         }
     }
@@ -245,46 +269,66 @@ fun HomeScreen(
 
 // TODO: здесь будет lazy column потом
 @Composable
-private fun MeetingsForDay(
-    date: LocalDate,
-    count: Int
+fun MeetingsForDay(
+    state: HomeUiState,
+    onLoadNext: () -> Unit
 ) {
-    val meetings = remember(date, count) {
-        List(count.coerceAtMost(6)) { idx ->
-            MeetingUi(
-                organizerName = "Организатор",
-                title = "Встреча ${idx + 1}",
-                description = "Описание встречи.",
-                dateText = "%02d.%02d.%d".format(date.dayOfMonth, date.monthValue, date.year),
-                timeText = "${9 + idx}:00 - ${10 + idx}:00"
-            )
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layout = listState.layoutInfo
+            val lastVisible =
+                layout.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+            lastVisible >= layout.totalItemsCount - 2
+        }.collect { needLoad ->
+            if (needLoad) onLoadNext()
         }
     }
 
-
-    Column(
+    LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        if (count == 0) {
-            Text(
-                text = "Нет встреч",
-                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                color = TextGrey,
-                fontSize = 14.sp
+
+        items(
+            items = state.meetings,
+            key = { it.id }
+        ) { meeting ->
+
+            val ui = MeetingUi(
+                organizerName = meeting.organizerId.toString(),
+                title = meeting.title,
+                description = meeting.description,
+                dateText = meeting.startAt,
+                timeText = ""
             )
-        } else {
-            meetings.forEach { meeting ->
-                MeetingCard(
-                    meeting = meeting,
-                    actions = MeetingCardActions.None
-                )
+
+            MeetingCard(
+                meeting = ui,
+                actions = MeetingCardActions.None
+            )
+        }
+
+        if (state.isLoadingMore) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
 }
+
 
 // навигация влево вправо по неделям/месяцам
 @Composable
@@ -417,11 +461,9 @@ private fun WeekDayItem(
                 Text(
                     text = if (count > 9) "9+" else count.toString(),
                     fontSize = 10.sp,
-                    lineHeight = 10.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.offset(y = (-0.5).dp)
+                    textAlign = TextAlign.Center
                 )
             }
         }
