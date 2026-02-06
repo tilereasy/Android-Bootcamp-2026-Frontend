@@ -14,7 +14,7 @@ import ru.sicampus.bootcamp2026.android.ui.testScreens.auth.AuthScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.HomeScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.CreateMeetingScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.NotificationScreen
-import ru.sicampus.bootcamp2026.android.ui.testScreens.home.ProfileScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.profile.ProfileScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.signUp.SignUpScreen
 
 @Composable
@@ -62,27 +62,13 @@ fun NavigationGraph(
 
         // Экран профиля
         composable<ProfileRoute> {
-            val coroutineScope = rememberCoroutineScope()
-
             ProfileScreen(
                 navController = navController,
-                onEditClick = {},
-                onExitClick = {
-                    coroutineScope.launch {
-                        AuthLocalDataSource.logout()
-
-                        navController.navigate(AuthRoute) {
-                            popUpTo(0) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                },
             )
         }
 
-        composable<NotificationsRoute>{
-            NotificationScreen (
+        composable<NotificationsRoute> {
+            NotificationScreen(
                 onExitClick = {
                     navController.popBackStack()
                 }

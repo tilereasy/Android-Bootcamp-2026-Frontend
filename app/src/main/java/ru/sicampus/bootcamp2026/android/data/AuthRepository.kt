@@ -13,17 +13,13 @@ class AuthRepository(
     ): Result<Boolean> {
         authLocalDataSource.setToken(login, password)
         return authNetworkDataSource.checkAuth()
-            .onSuccess { isLogin ->
-                if (!isLogin) authLocalDataSource.clearToken()
+            .mapCatching { personResponse ->
+                // Сохраняем ID пользователя из principal
+                authLocalDataSource.setUserId(personResponse.id)
+                true
             }
             .onFailure {
                 authLocalDataSource.clearToken()
             }
     }
-
-    suspend fun logout() {
-        authLocalDataSource.logout()
-    }
-
-
 }
