@@ -5,9 +5,14 @@ class CheckAuthFormatUseCase {
         login: String,
         password: String
     ): Boolean {
-        return login.length > 2 && login.all { char ->
-            char.isLetterOrDigit() &&
-                    ((char in 'A'..'Z') || (char in 'a'..'z') || char.isDigit())
-        } && password.isNotBlank()
+
+        val isPasswordValid = password.isNotBlank()
+
+        val isLoginValid = login.trim().length >= 3
+
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
+        val isEmailFormat = login.trim().matches(emailRegex)
+
+        return isLoginValid && isPasswordValid && isEmailFormat
     }
 }

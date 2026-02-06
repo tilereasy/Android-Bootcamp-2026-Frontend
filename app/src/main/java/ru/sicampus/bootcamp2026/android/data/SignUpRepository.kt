@@ -20,12 +20,12 @@ class SignUpRepository(
             fullName = fullName,
             department = department,
             position = position
-        ).onSuccess { isRegistered ->
-            if (isRegistered) {
-                // После успешной регистрации сохраняем токен
-                // Используем email в качестве логина
-                authLocalDataSource.setToken(email, password)
-            }
+        ).mapCatching { personResponse ->
+            // Сохраняем токен
+            authLocalDataSource.setToken(email, password)
+            // Сохраняем ID пользователя
+            authLocalDataSource.setUserId(personResponse.id)
+            true
         }
     }
 }

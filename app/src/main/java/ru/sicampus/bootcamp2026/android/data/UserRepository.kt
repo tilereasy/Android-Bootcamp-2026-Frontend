@@ -1,7 +1,7 @@
 package ru.sicampus.bootcamp2026.android.data
 
 import ru.sicampus.bootcamp2026.android.data.source.UserInfoDataSource
-import ru.sicampus.bootcamp2026.android.domain.list.entities.UserEntity
+import ru.sicampus.bootcamp2026.android.domain.entities.UserEntity
 import kotlin.collections.mapNotNull
 
 class UserRepository(
