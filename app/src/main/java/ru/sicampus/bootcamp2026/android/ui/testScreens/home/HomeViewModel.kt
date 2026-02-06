@@ -6,7 +6,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.sicampus.bootcamp2026.android.data.MeetingsRepository
+import ru.sicampus.bootcamp2026.android.data.PersonsRepository
+import ru.sicampus.bootcamp2026.android.data.dto.MeetingResponse
 import ru.sicampus.bootcamp2026.android.data.source.MeetingsNetworkDataSource
+import ru.sicampus.bootcamp2026.android.data.source.PersonsNetworkDataSource
 import ru.sicampus.bootcamp2026.android.domain.meetings.GetMyMeetingsForDayUseCase
 import ru.sicampus.bootcamp2026.android.domain.meetings.GetMyMeetingsForWeekUseCase
 import java.time.LocalDate
@@ -46,6 +49,7 @@ class HomeViewModel : ViewModel() {
                     isLast = page.last,
                     isLoading = false
                 )
+                ensureOrganizerNamesLoaded(page.content)
             }.onFailure {
                 _state.value = _state.value.copy(
                     isLoading = false,
@@ -80,6 +84,7 @@ class HomeViewModel : ViewModel() {
                     isLast = page.last,
                     isLoadingMore = false
                 )
+                ensureOrganizerNamesLoaded(page.content)
             }.onFailure {
                 _state.value = _state.value.copy(
                     isLoadingMore = false,
@@ -110,6 +115,27 @@ class HomeViewModel : ViewModel() {
                     error = it.message
                 )
             }
+        }
+    }
+
+    private val personsRepo = PersonsRepository(PersonsNetworkDataSource())
+
+    private fun ensureOrganizerNamesLoaded(meetings: List<MeetingResponse>) {
+        val existing = _state.value.organizerNames
+        val needIds = meetings.map { it.organizerId }.distinct().filter { it !in existing.keys }
+
+        if (needIds.isEmpty()) return
+
+        viewModelScope.launch {
+            val newMap = existing.toMutableMap()
+
+            needIds.forEach { id ->
+                personsRepo.getPerson(id).onSuccess { person ->
+                    newMap[id] = person.fullName
+                }
+            }
+
+            _state.value = _state.value.copy(organizerNames = newMap)
         }
     }
 }

@@ -11,5 +11,7 @@ data class HomeUiState(
     val isLoading: Boolean = false,
     val isLoadingMore: Boolean = false,
     val error: String? = null,
-    val weekCountsByDate: Map<LocalDate, Int> = emptyMap()
+    val weekCountsByDate: Map<LocalDate, Int> = emptyMap(),
+    val monthCountsByDate: Map<LocalDate, Int> = emptyMap(),
+    val organizerNames: Map<Long, String> = emptyMap()
 )
