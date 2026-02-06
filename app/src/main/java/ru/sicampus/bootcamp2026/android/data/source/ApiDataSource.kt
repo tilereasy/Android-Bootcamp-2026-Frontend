@@ -6,7 +6,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.sicampus.bootcamp2026.android.data.dto.InvitationDTO
-import ru.sicampus.bootcamp2026.android.data.dto.MeetingDTO
+import ru.sicampus.bootcamp2026.android.data.dto.MeetingResponse
 import ru.sicampus.bootcamp2026.android.data.dto.UserDTO
 
 class ApiDataSource {
@@ -14,7 +14,7 @@ class ApiDataSource {
     suspend fun getUsers(): Result<List<UserDTO>> =
         safeGet("${Network.BASE_URL}/users")
 
-    suspend fun getMeetings(): Result<List<MeetingDTO>> =
+    suspend fun getMeetings(): Result<List<MeetingResponse>> =
         safeGet("${Network.BASE_URL}/meetings")
 
     suspend fun getInvitations(): Result<List<InvitationDTO>> =

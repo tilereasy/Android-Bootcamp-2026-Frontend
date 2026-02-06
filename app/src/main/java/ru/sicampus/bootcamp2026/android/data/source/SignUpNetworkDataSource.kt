@@ -1,5 +1,6 @@
 package ru.sicampus.bootcamp2026.android.data.source
 
+import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
@@ -14,7 +15,7 @@ class SignUpNetworkDataSource {
         fullName: String,
         department: String,
         position: String
-    ): Result<Boolean> = withContext(Dispatchers.IO) {
+    ): Result<PersonResponse> = withContext(Dispatchers.IO) {
         runCatching {
             val result = Network.client.post("${Network.HOST}/api/person/register") {
                 setBody(
@@ -27,7 +28,11 @@ class SignUpNetworkDataSource {
                     )
                 )
             }
-            result.status == HttpStatusCode.OK || result.status == HttpStatusCode.Created
+            if (result.status == HttpStatusCode.OK || result.status == HttpStatusCode.Created) {
+                result.body<PersonResponse>()
+            } else {
+                error("Registration failed: ${result.status}")
+            }
         }
     }
 }
