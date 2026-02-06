@@ -317,7 +317,7 @@ fun HomeScreen(
                         MonthCalendar(
                             anchorDate = anchorDate,
                             selectedDate = selectedDate,
-                            meetingsCountByDate = state.weekCountsByDate, // TODO: заменить на monthCounts
+                            meetingsCountByDate = state.weekCountsByDate, // TODO:заменить на monthCounts
                             onSelectDate = { date ->
                                 selectedDate = date
                                 viewModel.loadFirstPage(date)
