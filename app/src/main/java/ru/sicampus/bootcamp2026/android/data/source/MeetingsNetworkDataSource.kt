@@ -13,7 +13,6 @@ class MeetingsNetworkDataSource {
         page: Int,
         size: Int
     ): Result<PageResponse<MeetingResponse>> = runCatching {
-
         Network.client.get("${Network.HOST}/api/meetings/my/day") {
             addAuthHeader()
             parameter("date", date)
@@ -21,13 +20,22 @@ class MeetingsNetworkDataSource {
             parameter("size", size)
         }.body()
     }
-    suspend fun getMyMeetingsForWeek(
-        start: String
-    ): Result<List<MeetingsCountByDateDto>> = runCatching {
 
+    suspend fun getMyMeetingsForWeek(
+        start: String, // "2026-02-03"
+    ): Result<List<MeetingsCountByDateDto>> = runCatching {
         Network.client.get("${Network.HOST}/api/meetings/my/week") {
             addAuthHeader()
             parameter("start", start)
+        }.body()
+    }
+
+    suspend fun getMyMeetingsForMonth(
+        month: String, // "2026-02"
+    ): Result<List<MeetingsCountByDateDto>> = runCatching {
+        Network.client.get("${Network.HOST}/api/meetings/my/month") {
+            addAuthHeader()
+            parameter("month", month)
         }.body()
     }
 }

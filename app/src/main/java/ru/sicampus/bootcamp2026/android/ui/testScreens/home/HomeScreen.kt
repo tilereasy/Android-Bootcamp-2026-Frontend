@@ -55,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -63,7 +64,6 @@ import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
-import ru.sicampus.bootcamp2026.android.ui.components.MeetingUi
 import ru.sicampus.bootcamp2026.android.ui.mappers.toMeetingUi
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
 import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
@@ -111,9 +111,20 @@ fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        val start = startOfWeek(anchorDate)
-        viewModel.loadWeek(start)
         viewModel.loadFirstPage(selectedDate)
+    }
+
+    LaunchedEffect(viewType, anchorDate) {
+        when (viewType) {
+            HomeViewType.WEEK -> {
+                viewModel.loadWeek(startOfWeek(anchorDate))
+            }
+            HomeViewType.MONTH -> {
+                val ym = YearMonth.from(anchorDate)
+                val monthParam = "%04d-%02d".format(ym.year, ym.monthValue) // "2026-02"
+                viewModel.loadMonth(monthParam)
+            }
+        }
     }
 
     // ПАГИНАЦИЯ
@@ -197,12 +208,7 @@ fun HomeScreen(
 
                                         selectedDate = anchorDate
                                         viewModel.loadFirstPage(selectedDate)
-
-                                        if (viewType == HomeViewType.WEEK) {
-                                            viewModel.loadWeek(startOfWeek(anchorDate))
-                                        } else {
-                                            // TODO: loadMonth потом
-                                        }
+                                        scrollToTop()
                                     },
                                     colors = MenuDefaults.itemColors(
                                         textColor = DarkBlue,
@@ -317,7 +323,7 @@ fun HomeScreen(
                         MonthCalendar(
                             anchorDate = anchorDate,
                             selectedDate = selectedDate,
-                            meetingsCountByDate = state.weekCountsByDate, // TODO:заменить на monthCounts
+                            meetingsCountByDate = state.monthCountsByDate,
                             onSelectDate = { date ->
                                 selectedDate = date
                                 viewModel.loadFirstPage(date)
@@ -414,6 +420,7 @@ private fun PeriodNavRow(
         }
     }
 }
+
 
 // Неделя
 @Composable
