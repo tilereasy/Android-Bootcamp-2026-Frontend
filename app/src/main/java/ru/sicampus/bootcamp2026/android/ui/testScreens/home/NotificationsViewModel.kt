@@ -11,7 +11,7 @@ import ru.sicampus.bootcamp2026.android.data.dto.InvitationStatusDto
 import ru.sicampus.bootcamp2026.android.data.dto.InvitationWithMeetingDto
 import ru.sicampus.bootcamp2026.android.data.source.InvitationsNetworkDataSource
 import ru.sicampus.bootcamp2026.android.data.source.PersonsNetworkDataSource
-import ru.sicampus.bootcamp2026.android.domain.invitations.GetMyInvitesWithMeetingUseCase
+import ru.sicampus.bootcamp2026.android.domain.notifications_invite.GetMyInvitesWithMeetingUseCase
 import ru.sicampus.bootcamp2026.android.domain.notifications_invite.RespondInvitationUseCase
 
 class NotificationsViewModel : ViewModel() {
