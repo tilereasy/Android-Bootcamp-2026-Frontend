@@ -20,6 +20,7 @@ class MeetingsNetworkDataSource {
         page: Int,
         size: Int
     ): Result<PageResponse<MeetingResponse>> = runCatching {
+
         Network.client.get("${Network.HOST}/api/meetings/my/day") {
             addAuthHeader()
             parameter("date", date)
@@ -27,10 +28,10 @@ class MeetingsNetworkDataSource {
             parameter("size", size)
         }.body()
     }
-
     suspend fun getMyMeetingsForWeek(
         start: String
     ): Result<List<MeetingsCountByDateDto>> = runCatching {
+
         Network.client.get("${Network.HOST}/api/meetings/my/week") {
             addAuthHeader()
             parameter("start", start)
@@ -44,6 +45,32 @@ class MeetingsNetworkDataSource {
             addAuthHeader()
             parameter("month", month)
         }.body()
+    suspend fun createMeeting(
+        organizerId: Long,
+        title: String,
+        description: String,
+        startAt: String,  // ISO 8601 format: "2026-02-07T09:00:00Z"
+        endAt: String     // ISO 8601 format: "2026-02-07T10:00:00Z"
+    ): Result<MeetingResponse> = withContext(Dispatchers.IO) {
+        runCatching {
+            val result = Network.client.post("${Network.HOST}/api/meetings") {
+                addAuthHeader()
+                setBody(
+                    CreateMeetingRequest(
+                        organizerId = organizerId,
+                        title = title,
+                        description = description,
+                        startAt = startAt,
+                        endAt = endAt
+                    )
+                )
+            }
+            if (result.status == HttpStatusCode.OK || result.status == HttpStatusCode.Created) {
+                result.body<MeetingResponse>()
+            } else {
+                error("Failed to create meeting: ${result.status}")
+            }
+        }
     }
 
     suspend fun createMeeting(

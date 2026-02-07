@@ -322,14 +322,20 @@ private fun CreateMeetingContent(
 
             // Результаты поиска
             if (state.isSearching) {
-                Spacer(modifier = Modifier.height(8.dp))
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                Spacer(modifier = Modifier
+                    .height(8.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                    .size(24.dp)
+                    .padding(start = 25.dp)
+                )
             } else if (state.searchResults.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 state.searchResults.forEach { person ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(start = 25.dp)
                             .clickable {
                                 viewModel.onIntent(
                                     CreateMeetingIntent.AddParticipant(
@@ -365,7 +371,8 @@ private fun CreateMeetingContent(
                 Text(
                     text = "Нет результатов",
                     fontSize = 14.sp,
-                    color = TextGrey
+                    color = TextGrey,
+                    modifier = Modifier.padding(start = 25.dp)
                 )
             }
 
@@ -375,7 +382,8 @@ private fun CreateMeetingContent(
                 Text(
                     text = "Добавленные участники:",
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(start = 25.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -383,7 +391,7 @@ private fun CreateMeetingContent(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                            .padding(start = 25.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = DarkBlue.copy(alpha = 0.1f)
                         )
