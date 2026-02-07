@@ -29,6 +29,8 @@ import androidx.navigation.NavController
 import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomButton
 import ru.sicampus.bootcamp2026.android.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.nav.AuthRoute
+import ru.sicampus.bootcamp2026.android.ui.nav.HomeRoute
 import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
 import ru.sicampus.bootcamp2026.android.ui.theme.ErrorRed
@@ -46,8 +48,25 @@ fun SignUpScreen(
     LaunchedEffect(Unit) {
         viewModel.actionFlow.collect { action ->
             when (action) {
-                is SignUpAction.OpenScreen -> navController.navigate(action.route)
-                is SignUpAction.NavigateBack -> navController.popBackStack()
+                is SignUpAction.OpenScreen -> {
+                    when (action.route) {
+                        is HomeRoute -> {
+                            // Переход на HomeRoute с очисткой стека авторизации
+                            navController.navigate(HomeRoute) {
+                                popUpTo(AuthRoute) {
+                                    inclusive = true  // Удаляем весь стек включая AuthRoute
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                        else -> {
+                            navController.navigate(action.route)
+                        }
+                    }
+                }
+                is SignUpAction.NavigateBack -> {
+                    navController.popBackStack()
+                }
             }
         }
     }
