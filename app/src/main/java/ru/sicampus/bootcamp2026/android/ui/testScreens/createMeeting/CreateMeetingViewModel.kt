@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import ru.sicampus.bootcamp2026.android.data.CreateMeetingRepository
 import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.data.source.InvitationNetworkDataSource
@@ -46,6 +48,10 @@ class CreateMeetingViewModel : ViewModel() {
     private val _actionFlow = MutableSharedFlow<CreateMeetingAction>()
     val actionFlow = _actionFlow.asSharedFlow()
 
+    // Job для debounce поиска
+    private var searchJob: Job? = null
+    private val SEARCH_DELAY_MS = 500L // Задержка перед поиском (500мс)
+
     fun onIntent(intent: CreateMeetingIntent) {
         when (intent) {
             is CreateMeetingIntent.UpdateTitle -> {
@@ -75,8 +81,10 @@ class CreateMeetingViewModel : ViewModel() {
 
             is CreateMeetingIntent.UpdateSearchQuery -> {
                 updateStateIfData {
-                    it.copy(searchQuery = intent.query, searchResults = emptyList())
+                    it.copy(searchQuery = intent.query)
                 }
+                // Автоматический поиск с debounce
+                searchWithDebounce(intent.query)
             }
 
             is CreateMeetingIntent.SearchPerson -> searchPerson()
@@ -107,32 +115,92 @@ class CreateMeetingViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Поиск с задержкой (debounce)
+     * Отменяет предыдущий поиск и запускает новый через SEARCH_DELAY_MS
+     */
+    private fun searchWithDebounce(query: String) {
+        // Отменяем предыдущий поиск
+        searchJob?.cancel()
+
+        val trimmedQuery = query.trim()
+
+        // Если запрос слишком короткий, очищаем результаты
+        if (trimmedQuery.length < 3) {
+            updateStateIfData {
+                it.copy(
+                    searchResults = emptyList(),
+                    isSearching = false
+                )
+            }
+            return
+        }
+
+        // Запускаем новый поиск с задержкой
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DELAY_MS)
+            searchPersonInternal(trimmedQuery)
+        }
+    }
+
+    /**
+     * Публичный метод поиска (для кнопки "Найти", если нужна)
+     */
     private fun searchPerson() {
         val state = (_uiState.value as? CreateMeetingState.Data) ?: return
         val query = state.searchQuery.trim()
         if (query.isBlank()) return
 
+        // Отменяем debounce и ищем сразу
+        searchJob?.cancel()
+        viewModelScope.launch {
+            searchPersonInternal(query)
+        }
+    }
+
+    /**
+     * Внутренняя логика поиска
+     */
+    private suspend fun searchPersonInternal(query: String) {
+        val state = (_uiState.value as? CreateMeetingState.Data) ?: return
+
+        // Минимальная длина для поиска
+        if (query.length < 3) {
+            updateStateIfData {
+                it.copy(
+                    isSearching = false,
+                    searchResults = emptyList()
+                )
+            }
+            return
+        }
+
         updateStateIfData { it.copy(isSearching = true) }
 
-        viewModelScope.launch {
-            searchPersonByEmailUseCase.invoke(query).fold(
-                onSuccess = { person ->
-                    val alreadyAdded = state.participants.any { it.id == person.id }
-                    updateStateIfData {
-                        it.copy(
-                            isSearching = false,
-                            searchResults = if (alreadyAdded) emptyList() else listOf(person),
-                            error = if (alreadyAdded) "Этот участник уже добавлен" else null
-                        )
-                    }
-                },
-                onFailure = {
-                    updateStateIfData {
-                        it.copy(isSearching = false, searchResults = emptyList())
-                    }
+        searchPersonByEmailUseCase.invoke(query).fold(
+            onSuccess = { persons ->
+                // Фильтруем уже добавленных участников
+                val filteredPersons = persons.filter { person ->
+                    state.participants.none { it.id == person.id }
                 }
-            )
-        }
+
+                updateStateIfData {
+                    it.copy(
+                        isSearching = false,
+                        searchResults = filteredPersons,
+                        error = null
+                    )
+                }
+            },
+            onFailure = {
+                updateStateIfData {
+                    it.copy(
+                        isSearching = false,
+                        searchResults = emptyList()
+                    )
+                }
+            }
+        )
     }
 
     private fun validateForm() {

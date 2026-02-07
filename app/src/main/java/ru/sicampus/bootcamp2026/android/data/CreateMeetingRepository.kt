@@ -45,4 +45,13 @@ class CreateMeetingRepository(
             meetingResponse
         }
     }
+
+    suspend fun searchPersonsByPartialEmail(query: String): Result<List<PersonResponse>> {
+        return personNetworkDataSource.getAllPersons()
+            .map { pageResponse ->
+                pageResponse.content.filter { person ->
+                    person.email.contains(query, ignoreCase = true)
+                }
+            }
+    }
 }

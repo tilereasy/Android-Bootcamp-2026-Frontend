@@ -143,6 +143,150 @@ private fun CreateMeetingContent(
             textColor = TextGrey
         )
 
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Поиск участников
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            // Поле ввода email (без кнопки "Найти")
+            CustomTextField(
+                value = state.searchQuery,
+                onValueChange = { viewModel.onIntent(CreateMeetingIntent.UpdateSearchQuery(it)) },
+                label = "Email сотрудника",
+                textColor = TextGrey,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Search,
+                keyboardActionOnDone = {
+                    // При нажатии Enter на клавиатуре - поиск сразу
+                    viewModel.onIntent(CreateMeetingIntent.SearchPerson)
+                }
+            )
+
+            // Результаты поиска
+            if (state.isSearching) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.padding(start = 25.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Поиск...",
+                        fontSize = 12.sp,
+                        color = TextGrey
+                    )
+                }
+            } else if (state.searchResults.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                state.searchResults.forEach { person ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp)
+                            .clickable {
+                                viewModel.onIntent(
+                                    CreateMeetingIntent.AddParticipant(
+                                        Participant(
+                                            id = person.id,
+                                            email = person.email,
+                                            fullName = person.fullName
+                                        )
+                                    )
+                                )
+                            }
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Unspecified
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = person.fullName,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = person.email,
+                                fontSize = 12.sp,
+                                color = TextGrey
+                            )
+                        }
+                    }
+                }
+            } else if (state.searchQuery.isNotBlank() && !state.isSearching && state.searchQuery.length >= 3) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Нет результатов",
+                    fontSize = 14.sp,
+                    color = TextGrey,
+                    modifier = Modifier.padding(start = 25.dp)
+                )
+            }
+
+            // Список участников
+            if (state.participants.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Добавленные участники:",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(start = 25.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                state.participants.forEach { participant ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Unspecified
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = participant.fullName,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = participant.email,
+                                    fontSize = 12.sp,
+                                    color = TextGrey
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    viewModel.onIntent(
+                                        CreateMeetingIntent.RemoveParticipant(participant.id)
+                                    )
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Удалить",
+                                    tint = ErrorRed
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(30.dp))
 
         // Дата
@@ -282,156 +426,6 @@ private fun CreateMeetingContent(
 
             }
 
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        // Поиск участников
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 25.dp)
-        ) {
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CustomTextField(
-                    value = state.searchQuery,
-                    onValueChange = { viewModel.onIntent(CreateMeetingIntent.UpdateSearchQuery(it)) },
-                    label = "Email сотрудника",
-                    textColor = TextGrey,
-                    modifier = Modifier.weight(1f),
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Search,
-                    keyboardActionOnDone = {
-                        viewModel.onIntent(CreateMeetingIntent.SearchPerson)
-                    }
-                )
-
-                Button(
-                    onClick = { viewModel.onIntent(CreateMeetingIntent.SearchPerson) },
-                    enabled = state.searchQuery.isNotBlank(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = DarkBlue
-                    ),
-                ) {
-                    Text("Найти")
-                }
-            }
-
-            // Результаты поиска
-            if (state.isSearching) {
-                Spacer(modifier = Modifier
-                    .height(8.dp))
-                CircularProgressIndicator(
-                    modifier = Modifier
-                    .size(24.dp)
-                    .padding(start = 25.dp)
-                )
-            } else if (state.searchResults.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                state.searchResults.forEach { person ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 25.dp)
-                            .clickable {
-                                viewModel.onIntent(
-                                    CreateMeetingIntent.AddParticipant(
-                                        Participant(
-                                            id = person.id,
-                                            email = person.email,
-                                            fullName = person.fullName
-                                        )
-                                    )
-                                )
-                            }
-                            .padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.LightGray.copy(alpha = 0.2f)
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                text = person.fullName,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                            Text(
-                                text = person.email,
-                                fontSize = 12.sp,
-                                color = TextGrey
-                            )
-                        }
-                    }
-                }
-            } else if (state.searchQuery.isNotBlank() && !state.isSearching) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Нет результатов",
-                    fontSize = 14.sp,
-                    color = TextGrey,
-                    modifier = Modifier.padding(start = 25.dp)
-                )
-            }
-
-            // Список участников
-            if (state.participants.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Добавленные участники:",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 25.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                state.participants.forEach { participant ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 25.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = DarkBlue.copy(alpha = 0.1f)
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = participant.fullName,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = participant.email,
-                                    fontSize = 12.sp,
-                                    color = TextGrey
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    viewModel.onIntent(
-                                        CreateMeetingIntent.RemoveParticipant(participant.id)
-                                    )
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Удалить",
-                                    tint = ErrorRed
-                                )
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
