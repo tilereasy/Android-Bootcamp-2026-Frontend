@@ -267,7 +267,6 @@ fun HomeScreen(
                                 scrollToTop()
                             }
                             HomeViewType.MONTH -> {
-                                // TODO: viewModel.loadMonth(YearMonth.from(newAnchor))
                                 viewModel.loadFirstPage(newSelected)
                                 scrollToTop()
                             }
@@ -290,7 +289,6 @@ fun HomeScreen(
                                 scrollToTop()
                             }
                             HomeViewType.MONTH -> {
-                                // TODO: viewModel.loadMonth(YearMonth.from(newAnchor))
                                 viewModel.loadFirstPage(newSelected)
                                 scrollToTop()
                             }

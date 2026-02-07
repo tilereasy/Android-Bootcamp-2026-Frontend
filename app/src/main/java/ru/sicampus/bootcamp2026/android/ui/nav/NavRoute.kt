@@ -16,6 +16,7 @@ import ru.sicampus.bootcamp2026.android.ui.testScreens.home.HomeScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.CreateMeetingScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.HomeViewModel
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.NotificationScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.home.NotificationsViewModel
 import ru.sicampus.bootcamp2026.android.ui.testScreens.profile.ProfileScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.signUp.SignUpScreen
 
@@ -71,11 +72,12 @@ fun NavigationGraph(
             )
         }
 
-        composable<NotificationsRoute> {
+        // Экран уведомлений о приглашениях на встречи
+        composable<NotificationsRoute> { backStackEntry ->
+            val vm: NotificationsViewModel = viewModel(backStackEntry)
             NotificationScreen(
-                onExitClick = {
-                    navController.popBackStack()
-                }
+                onExitClick = { navController.popBackStack() },
+                viewModel = vm
             )
         }
     }
