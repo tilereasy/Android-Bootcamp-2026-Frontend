@@ -290,7 +290,7 @@ private fun CreateMeetingContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 25.dp)
+                .padding(end = 25.dp)
         ) {
 
             Row(
@@ -309,11 +309,12 @@ private fun CreateMeetingContent(
                     }
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
-
                 Button(
                     onClick = { viewModel.onIntent(CreateMeetingIntent.SearchPerson) },
-                    enabled = state.searchQuery.isNotBlank()
+                    enabled = state.searchQuery.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DarkBlue
+                    ),
                 ) {
                     Text("Найти")
                 }
