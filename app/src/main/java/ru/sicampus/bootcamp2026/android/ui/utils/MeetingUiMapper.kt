@@ -1,4 +1,4 @@
-package ru.sicampus.bootcamp2026.android.ui.mappers
+package ru.sicampus.bootcamp2026.android.ui.utils
 
 import ru.sicampus.bootcamp2026.android.data.dto.MeetingResponse
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingUi

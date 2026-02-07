@@ -64,7 +64,7 @@ import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
-import ru.sicampus.bootcamp2026.android.ui.mappers.toMeetingUi
+import ru.sicampus.bootcamp2026.android.ui.utils.toMeetingUi
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
 import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
 import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey

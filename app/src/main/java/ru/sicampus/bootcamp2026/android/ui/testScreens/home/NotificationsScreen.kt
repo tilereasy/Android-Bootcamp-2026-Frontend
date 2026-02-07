@@ -3,7 +3,6 @@ package ru.sicampus.bootcamp2026.android.ui.testScreens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,14 +19,18 @@ import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingUi
-import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
 import ru.sicampus.bootcamp2026.android.ui.theme.Black
 import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
 import ru.sicampus.bootcamp2026.android.ui.theme.White
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.snapshotFlow
+import ru.sicampus.bootcamp2026.android.data.dto.InvitationStatusDto
+import ru.sicampus.bootcamp2026.android.ui.utils.toMeetingUi
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationScreen(
+fun NotificationsScreen(
     onExitClick: () -> Unit = {},
     viewModel: NotificationsViewModel
 ) {
@@ -44,7 +47,7 @@ fun NotificationScreen(
             val lastVisible = layout.visibleItemsInfo.lastOrNull()?.index ?: 0
 
             total > 0 &&
-                    state.items.isNotEmpty() &&
+                    state.invites.isNotEmpty() &&
                     !state.isLast &&
                     !state.isLoading &&
                     !state.isLoadingMore &&
@@ -87,7 +90,7 @@ fun NotificationScreen(
         }
     ) { paddingValues ->
 
-        if (!state.isLoading && state.items.isEmpty()) {
+        if (!state.isLoading && state.invites.isEmpty()) {
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
@@ -120,24 +123,22 @@ fun NotificationScreen(
             ) {
 
                 items(
-                    items = state.items,
+                    items = state.invites,
                     key = { it.id }
                 ) { invite ->
                     val meeting = invite.meeting
 
-                    val ui = MeetingUi(
-                        organizerName = "Организатор #${meeting.organizerId}",
-                        title = meeting.title,
-                        description = meeting.description,
-                        dateText = meeting.startAt,
-                        timeText = "${meeting.startAt} - ${meeting.endAt}"
-                    )
+                    val organizerName =
+                        state.organizerNames[meeting.organizerId]
+                            ?: "Организатор #${meeting.organizerId}"
+
+                    val ui = meeting.toMeetingUi(organizerName = organizerName)
 
                     MeetingCard(
                         meeting = ui,
                         actions = MeetingCardActions.InviteActions(
-                            onAccept = { viewModel.respond(invite.id, "ACCEPTED") },
-                            onDecline = { viewModel.respond(invite.id, "DECLINED") }
+                            onAccept = { viewModel.respond(invite.id, InvitationStatusDto.ACCEPTED) },
+                            onDecline = { viewModel.respond(invite.id, InvitationStatusDto.DECLINED) }
                         )
                     )
                 }
@@ -156,11 +157,3 @@ fun NotificationScreen(
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun ShowNotificationsScreen() {
-//    AppTheme {
-//        NotificationScreen()
-//    }
-//}
