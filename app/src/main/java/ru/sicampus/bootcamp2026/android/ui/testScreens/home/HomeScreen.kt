@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,8 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -37,6 +36,7 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,7 +55,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -64,7 +66,7 @@ import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
-import ru.sicampus.bootcamp2026.android.ui.mappers.toMeetingUi
+import ru.sicampus.bootcamp2026.android.ui.utils.toMeetingUi
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
 import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
 import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
@@ -89,8 +91,6 @@ fun HomeScreen(
     var viewType by remember { mutableStateOf(HomeViewType.WEEK) }
     var showViewTypeMenu by remember { mutableStateOf(false) }
 
-    val pendingInvitesCount by remember { mutableStateOf(2) }
-
     var anchorDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
@@ -99,6 +99,19 @@ fun HomeScreen(
     val listState = rememberLazyListState()
 
     val scope = rememberCoroutineScope()
+
+    val hasPending = state.hasPendingInvites
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val obs = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshPendingInvitesBadge()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(obs)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(obs) }
+    }
 
     fun scrollToTop() {
         scope.launch {
@@ -222,26 +235,32 @@ fun HomeScreen(
                     }
 
                     IconButton(onClick = onNotificationsClick) {
-                        if (pendingInvitesCount > 0) {
-                            BadgedBox(badge = {
-                                Badge(containerColor = Color.Red, contentColor = Color.White) {}
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Notifications,
-                                    contentDescription = "Notifications",
-                                    tint = DarkBlue,
-                                    modifier = Modifier.size(30.dp)
-                                )
-                            }
-                        } else {
+                        Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .padding(end = 4.dp, top = 2.dp)
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = "Notifications",
-                                tint = IconsGrey,
-                                modifier = Modifier.size(30.dp)
+                                tint = if (hasPending) DarkBlue else IconsGrey,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(30.dp)
                             )
+                            if (hasPending) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = 2.dp, y = (-2).dp)
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.Red)
+                                )
+                            }
                         }
                     }
+
                 }
             }
 

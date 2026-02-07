@@ -5,10 +5,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.sicampus.bootcamp2026.android.data.InvitationsRepository
 import ru.sicampus.bootcamp2026.android.data.MeetingsRepository
+import ru.sicampus.bootcamp2026.android.data.dto.InvitationStatusDto
 import ru.sicampus.bootcamp2026.android.data.dto.MeetingResponse
+import ru.sicampus.bootcamp2026.android.data.source.InvitationsNetworkDataSource
 import ru.sicampus.bootcamp2026.android.data.source.MeetingsNetworkDataSource
 import ru.sicampus.bootcamp2026.android.data.source.PersonsNetworkDataSource
+import ru.sicampus.bootcamp2026.android.domain.notifications_invite.GetMyInvitesWithMeetingUseCase
 import ru.sicampus.bootcamp2026.android.domain.meetings.GetMyMeetingsForMonthUseCase
 import ru.sicampus.bootcamp2026.android.domain.meetings.GetMyMeetingsForWeekUseCase
 import ru.sicampus.bootcamp2026.android.domain.meetings.GetMyMeetingsForDayUseCase
@@ -23,11 +27,13 @@ class HomeViewModel : ViewModel() {
     private val getDayUseCase = GetMyMeetingsForDayUseCase(repo)
     private val getWeekUseCase = GetMyMeetingsForWeekUseCase(repo)
     private val getMonthUseCase = GetMyMeetingsForMonthUseCase(repo)
-
     private val pageSize = 5
 
     private val _state = MutableStateFlow(HomeUiState())
     val state = _state.asStateFlow()
+
+    private val invitesRepo = InvitationsRepository(InvitationsNetworkDataSource())
+    private val getInvites = GetMyInvitesWithMeetingUseCase(invitesRepo)
 
     fun loadFirstPage(date: LocalDate) {
         _state.value = _state.value.copy(
@@ -167,4 +173,21 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun refreshPendingInvitesBadge() {
+        viewModelScope.launch {
+            val result = getInvites(
+                status = InvitationStatusDto.PENDING,
+                page = 0,
+                size = 1
+            )
+
+            result.onSuccess { page ->
+                _state.value = _state.value.copy(
+                    hasPendingInvites = page.content.isNotEmpty()
+                )
+            }.onFailure {
+                // по желанию: не ломаем UI, просто оставляем старое значение
+            }
+        }
+    }
 }

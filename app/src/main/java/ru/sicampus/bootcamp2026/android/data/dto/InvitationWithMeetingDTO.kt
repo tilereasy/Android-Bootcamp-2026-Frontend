@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class InvitationWithMeetingDto(
     val id: Long,
     val inviteeId: Long,
-    val status: String,         // "PENDING"
+    val status: InvitationStatusDto,         // "PENDING"
     val respondedAt: String? = null,
     val createdAt: String,
     val meeting: MeetingResponse
