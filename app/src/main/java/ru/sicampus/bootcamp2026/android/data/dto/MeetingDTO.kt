@@ -20,7 +20,7 @@ data class PageResponse<T>(
     val number: Int
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class MeetingsCountByDateDto(
     val date: String, // "2026-02-06"
     val count: Int

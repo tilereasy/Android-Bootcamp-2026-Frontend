@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class PersonsNetworkDataSource {
-
     suspend fun getPerson(id: Long): Result<PersonDto> = runCatching {
         Network.client.get("${Network.HOST}/api/person/$id") {
             addAuthHeader()

@@ -17,6 +17,8 @@ import ru.sicampus.bootcamp2026.android.data.source.PersonsNetworkDataSource
 import ru.sicampus.bootcamp2026.android.domain.invitation.CreateMeetingWithInvitationsUseCase
 import ru.sicampus.bootcamp2026.android.domain.invitation.SearchPersonByEmailUseCase
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class CreateMeetingViewModel : ViewModel() {
@@ -207,11 +209,8 @@ class CreateMeetingViewModel : ViewModel() {
 
     private fun createMeeting() {
         val state = (_uiState.value as? CreateMeetingState.Data) ?: return
-
-        // КРИТИЧНО: Сохраняем текущее состояние перед валидацией
         val currentState = state
 
-        // Проверка валидности перед отправкой
         val validationHint = getValidationHint(state)
         if (validationHint != null) {
             updateStateIfData { it.copy(error = validationHint) }
@@ -222,9 +221,9 @@ class CreateMeetingViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // Преобразуем дату и время в ISO 8601 формат
-                val startAt = convertToISO8601(currentState.date, currentState.startHour)
-                val endAt = convertToISO8601(currentState.date, currentState.endHour)
+                // ИСПРАВЛЕНО: используем локальный часовой пояс вместо UTC
+                val startAt = convertToISO8601WithTimezone(currentState.date, currentState.startHour)
+                val endAt = convertToISO8601WithTimezone(currentState.date, currentState.endHour)
 
                 val inviteeIds = currentState.participants.map { it.id }
 
@@ -239,14 +238,12 @@ class CreateMeetingViewModel : ViewModel() {
                         _actionFlow.emit(CreateMeetingAction.MeetingCreated)
                     },
                     onFailure = { error ->
-                        // КРИТИЧНО: Возвращаемся в Data state с ошибкой
                         _uiState.value = currentState.copy(
                             error = error.message ?: "Ошибка создания встречи"
                         )
                     }
                 )
             } catch (e: Exception) {
-                // КРИТИЧНО: Ловим любые исключения и возвращаемся в Data state
                 _uiState.value = currentState.copy(
                     error = e.message ?: "Неизвестная ошибка"
                 )
@@ -254,19 +251,25 @@ class CreateMeetingViewModel : ViewModel() {
         }
     }
 
-    private fun convertToISO8601(date: String, hour: String): String {
-        // date: "07.02.2026", hour: "09"
-        // result: "2026-02-07T09:00:00Z"
+    private fun convertToISO8601WithTimezone(date: String, hour: String): String {
+        // Input: date="07.02.2026", hour="0"
+        // Output: "2026-02-07T00:00:00+03:00" (для Москвы UTC+3)
         try {
             val dateParts = date.split(".")
-            val day = dateParts[0].padStart(2, '0')
-            val month = dateParts[1].padStart(2, '0')
-            val year = dateParts[2]
-            val hourPadded = hour.padStart(2, '0')
+            val day = dateParts[0].toInt()
+            val month = dateParts[1].toInt()
+            val year = dateParts[2].toInt()
+            val hourInt = hour.toInt()
 
-            return "$year-$month-${day}T$hourPadded:00:00Z"
+            val localDateTime = LocalDateTime.of(year, month, day, hourInt, 0, 0)
+
+            val zoneId = ZoneId.systemDefault()
+
+            val zonedDateTime = localDateTime.atZone(zoneId)
+
+            return zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
         } catch (e: Exception) {
-            throw IllegalArgumentException("Invalid date/time format: date=$date, hour=$hour")
+            throw IllegalArgumentException("Invalid date/time format: date=$date, hour=$hour", e)
         }
     }
 
