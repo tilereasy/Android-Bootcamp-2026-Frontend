@@ -16,10 +16,11 @@ import ru.sicampus.bootcamp2026.android.data.source.MeetingsNetworkDataSource
 import ru.sicampus.bootcamp2026.android.data.source.PersonsNetworkDataSource
 import ru.sicampus.bootcamp2026.android.domain.invitation.CreateMeetingWithInvitationsUseCase
 import ru.sicampus.bootcamp2026.android.domain.invitation.SearchPersonByEmailUseCase
-import java.time.LocalDate
+import java.time.*
 import java.time.format.DateTimeFormatter
 
 class CreateMeetingViewModel : ViewModel() {
+
     private val repository by lazy {
         CreateMeetingRepository(
             meetingsNetworkDataSource = MeetingsNetworkDataSource(),
@@ -29,7 +30,10 @@ class CreateMeetingViewModel : ViewModel() {
         )
     }
 
-    private val searchPersonByEmailUseCase by lazy { SearchPersonByEmailUseCase(repository) }
+    private val searchPersonByEmailUseCase by lazy {
+        SearchPersonByEmailUseCase(repository)
+    }
+
     private val createMeetingWithInvitationsUseCase by lazy {
         CreateMeetingWithInvitationsUseCase(repository)
     }
@@ -70,18 +74,17 @@ class CreateMeetingViewModel : ViewModel() {
             }
 
             is CreateMeetingIntent.UpdateSearchQuery -> {
-                updateStateIfData { it.copy(searchQuery = intent.query, searchResults = emptyList()) }
+                updateStateIfData {
+                    it.copy(searchQuery = intent.query, searchResults = emptyList())
+                }
             }
 
-            is CreateMeetingIntent.SearchPerson -> {
-                searchPerson()
-            }
+            is CreateMeetingIntent.SearchPerson -> searchPerson()
 
             is CreateMeetingIntent.AddParticipant -> {
-                updateStateIfData { oldState ->
-                    val updatedParticipants = oldState.participants + intent.participant
-                    oldState.copy(
-                        participants = updatedParticipants,
+                updateStateIfData { old ->
+                    old.copy(
+                        participants = old.participants + intent.participant,
                         searchQuery = "",
                         searchResults = emptyList(),
                         error = null
@@ -91,59 +94,41 @@ class CreateMeetingViewModel : ViewModel() {
             }
 
             is CreateMeetingIntent.RemoveParticipant -> {
-                updateStateIfData { oldState ->
-                    oldState.copy(
-                        participants = oldState.participants.filter { it.id != intent.participantId },
+                updateStateIfData { old ->
+                    old.copy(
+                        participants = old.participants.filter { it.id != intent.participantId },
                         error = null
                     )
                 }
                 validateForm()
             }
 
-            is CreateMeetingIntent.CreateMeeting -> {
-                createMeeting()
-            }
+            is CreateMeetingIntent.CreateMeeting -> createMeeting()
         }
     }
 
     private fun searchPerson() {
-        val currentState = (_uiState.value as? CreateMeetingState.Data) ?: return
-        val query = currentState.searchQuery.trim()
-
-        if (query.isBlank()) {
-            updateStateIfData { it.copy(searchResults = emptyList()) }
-            return
-        }
+        val state = (_uiState.value as? CreateMeetingState.Data) ?: return
+        val query = state.searchQuery.trim()
+        if (query.isBlank()) return
 
         updateStateIfData { it.copy(isSearching = true) }
 
         viewModelScope.launch {
             searchPersonByEmailUseCase.invoke(query).fold(
-                onSuccess = { personResponse ->
-                    val isAlreadyAdded = currentState.participants.any { it.id == personResponse.id }
-                    if (isAlreadyAdded) {
-                        updateStateIfData { oldState ->
-                            oldState.copy(
-                                isSearching = false,
-                                searchResults = emptyList(),
-                                error = "Этот участник уже добавлен"
-                            )
-                        }
-                    } else {
-                        updateStateIfData { oldState ->
-                            oldState.copy(
-                                isSearching = false,
-                                searchResults = listOf(personResponse)
-                            )
-                        }
+                onSuccess = { person ->
+                    val alreadyAdded = state.participants.any { it.id == person.id }
+                    updateStateIfData {
+                        it.copy(
+                            isSearching = false,
+                            searchResults = if (alreadyAdded) emptyList() else listOf(person),
+                            error = if (alreadyAdded) "Этот участник уже добавлен" else null
+                        )
                     }
                 },
                 onFailure = {
-                    updateStateIfData { oldState ->
-                        oldState.copy(
-                            isSearching = false,
-                            searchResults = emptyList()
-                        )
+                    updateStateIfData {
+                        it.copy(isSearching = false, searchResults = emptyList())
                     }
                 }
             )
@@ -151,67 +136,18 @@ class CreateMeetingViewModel : ViewModel() {
     }
 
     private fun validateForm() {
-        updateStateIfData { state ->
-            val hint = getValidationHint(state)
-            state.copy(
+        updateStateIfData {
+            val hint = getValidationHint(it)
+            it.copy(
                 isEnabledCreate = hint == null,
                 validationHint = hint
             )
         }
     }
 
-    private fun getValidationHint(state: CreateMeetingState.Data): String? {
-        return when {
-            state.title.trim().isBlank() -> "Введите название встречи"
-            state.description.trim().isBlank() -> "Введите описание"
-            state.date.isBlank() -> "Выберите дату"
-            !isValidDate(state.date) -> "Некорректный формат даты (дд.мм.гггг)"
-            state.startHour.isBlank() -> "Выберите время начала"
-            !isValidHour(state.startHour) -> "Некорректный час (от 0 до 23)"
-            state.endHour.isBlank() -> "Выберите время окончания"
-            !isValidHour(state.endHour) -> "Некорректный час (от 0 до 23)"
-            !isValidTimeRange(state.startHour, state.endHour) -> "Время окончания должно быть больше времени начала"
-            state.participants.isEmpty() -> "Добавьте хотя бы одного участника"
-            else -> null
-        }
-    }
-
-    private fun isValidDate(date: String): Boolean {
-        return try {
-            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-            LocalDate.parse(date, formatter)
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    private fun isValidHour(hour: String): Boolean {
-        return try {
-            val h = hour.toIntOrNull() ?: return false
-            h in 0..23
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    private fun isValidTimeRange(startHour: String, endHour: String): Boolean {
-        return try {
-            val start = startHour.toIntOrNull() ?: return false
-            val end = endHour.toIntOrNull() ?: return false
-            end > start
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     private fun createMeeting() {
         val state = (_uiState.value as? CreateMeetingState.Data) ?: return
 
-        // КРИТИЧНО: Сохраняем текущее состояние перед валидацией
-        val currentState = state
-
-        // Проверка валидности перед отправкой
         val validationHint = getValidationHint(state)
         if (validationHint != null) {
             updateStateIfData { it.copy(error = validationHint) }
@@ -222,57 +158,68 @@ class CreateMeetingViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // Преобразуем дату и время в ISO 8601 формат
-                val startAt = convertToISO8601(currentState.date, currentState.startHour)
-                val endAt = convertToISO8601(currentState.date, currentState.endHour)
-
-                val inviteeIds = currentState.participants.map { it.id }
+                val startAt = convertToIsoUtc(state.date, state.startHour)
+                val endAt = convertToIsoUtc(state.date, state.endHour)
 
                 createMeetingWithInvitationsUseCase.invoke(
-                    title = currentState.title.trim(),
-                    description = currentState.description.trim(),
+                    title = state.title.trim(),
+                    description = state.description.trim(),
                     startAt = startAt,
                     endAt = endAt,
-                    inviteeIds = inviteeIds
+                    inviteeIds = state.participants.map { it.id }
                 ).fold(
                     onSuccess = {
                         _actionFlow.emit(CreateMeetingAction.MeetingCreated)
                     },
-                    onFailure = { error ->
-                        // КРИТИЧНО: Возвращаемся в Data state с ошибкой
-                        _uiState.value = currentState.copy(
-                            error = error.message ?: "Ошибка создания встречи"
+                    onFailure = {
+                        _uiState.value = state.copy(
+                            error = it.message ?: "Ошибка создания встречи"
                         )
                     }
                 )
             } catch (e: Exception) {
-                // КРИТИЧНО: Ловим любые исключения и возвращаемся в Data state
-                _uiState.value = currentState.copy(
+                _uiState.value = state.copy(
                     error = e.message ?: "Неизвестная ошибка"
                 )
             }
         }
     }
 
-    private fun convertToISO8601(date: String, hour: String): String {
-        // date: "07.02.2026", hour: "09"
-        // result: "2026-02-07T09:00:00Z"
-        try {
-            val dateParts = date.split(".")
-            val day = dateParts[0].padStart(2, '0')
-            val month = dateParts[1].padStart(2, '0')
-            val year = dateParts[2]
-            val hourPadded = hour.padStart(2, '0')
+    /**
+     * ЛОКАЛЬНОЕ время пользователя → UTC ISO-8601
+     */
+    private fun convertToIsoUtc(date: String, hour: String): String {
+        val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-            return "$year-$month-${day}T$hourPadded:00:00Z"
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Invalid date/time format: date=$date, hour=$hour")
+        val localDate = LocalDate.parse(date, dateFormatter)
+        val localTime = LocalTime.of(hour.toInt(), 0)
+        val localDateTime = LocalDateTime.of(localDate, localTime)
+
+        return localDateTime
+            .atZone(ZoneId.systemDefault())
+            .withZoneSameInstant(ZoneOffset.UTC)
+            .format(DateTimeFormatter.ISO_INSTANT)
+    }
+
+    private fun updateStateIfData(
+        block: (CreateMeetingState.Data) -> CreateMeetingState
+    ) {
+        _uiState.update { state ->
+            (state as? CreateMeetingState.Data)?.let(block) ?: state
         }
     }
 
-    private fun updateStateIfData(lambda: (CreateMeetingState.Data) -> CreateMeetingState) {
-        _uiState.update { state ->
-            (state as? CreateMeetingState.Data)?.let { lambda.invoke(it) } ?: state
+    private fun getValidationHint(state: CreateMeetingState.Data): String? {
+        return when {
+            state.title.isBlank() -> "Введите название встречи"
+            state.description.isBlank() -> "Введите описание"
+            state.date.isBlank() -> "Выберите дату"
+            state.startHour.isBlank() -> "Выберите время начала"
+            state.endHour.isBlank() -> "Выберите время окончания"
+            state.endHour.toInt() <= state.startHour.toInt() ->
+                "Время окончания должно быть больше времени начала"
+            state.participants.isEmpty() -> "Добавьте хотя бы одного участника"
+            else -> null
         }
     }
 }
