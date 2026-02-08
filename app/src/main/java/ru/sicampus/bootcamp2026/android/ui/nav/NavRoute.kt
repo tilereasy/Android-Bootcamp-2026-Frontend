@@ -2,6 +2,7 @@ package ru.sicampus.bootcamp2026.android.ui.nav
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,8 +11,12 @@ import kotlinx.coroutines.runBlocking
 import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.ui.testScreens.auth.AuthScreen
 import ru.sicampus.bootcamp2026.android.ui.testScreens.home.HomeScreen
-import ru.sicampus.bootcamp2026.android.ui.testScreens.home.CreateMeetingScreen
-import ru.sicampus.bootcamp2026.android.ui.testScreens.home.ProfileScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.createMeeting.CreateMeetingScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.home.HomeViewModel
+import ru.sicampus.bootcamp2026.android.ui.testScreens.home.NotificationsScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.home.NotificationsViewModel
+import ru.sicampus.bootcamp2026.android.ui.testScreens.profile.ProfileScreen
+import ru.sicampus.bootcamp2026.android.ui.testScreens.signUp.SignUpScreen
 
 @Composable
 fun NavigationGraph(
@@ -32,11 +37,22 @@ fun NavigationGraph(
             )
         }
 
+        // Экран регистрации
+        composable<SignUpRoute> {
+            SignUpScreen(
+                navController = navController
+            )
+        }
+
         // Главный экран
-        composable<HomeRoute> {
+        composable<HomeRoute> { backStackEntry ->
+            val homeViewModel: HomeViewModel = viewModel(backStackEntry)
             HomeScreen(
                 navController = navController,
-                onNotificationsClick = {}
+                viewModel = homeViewModel,
+                onNotificationsClick = {
+                    navController.navigate(NotificationsRoute)
+                }
             )
         }
 
@@ -51,8 +67,15 @@ fun NavigationGraph(
         composable<ProfileRoute> {
             ProfileScreen(
                 navController = navController,
-                onEditClick = {},
-                onExitClick = {},
+            )
+        }
+
+        // Экран уведомлений о приглашениях на встречи
+        composable<NotificationsRoute> { backStackEntry ->
+            val vm: NotificationsViewModel = viewModel(backStackEntry)
+            NotificationsScreen(
+                onExitClick = { navController.popBackStack() },
+                viewModel = vm
             )
         }
     }

@@ -1,4 +1,4 @@
-package ru.innovationcampus.android.data
+package ru.sicampus.bootcamp2026.android.data
 
 import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.data.source.AuthNetworkDataSource
@@ -13,12 +13,12 @@ class AuthRepository(
     ): Result<Boolean> {
         authLocalDataSource.setToken(login, password)
         return authNetworkDataSource.checkAuth()
-            .onSuccess { isLogin ->
-                if (!isLogin) authLocalDataSource.clearToken()
+            .mapCatching { personResponse ->
+                authLocalDataSource.setUserId(personResponse.id)
+                true
             }
             .onFailure {
                 authLocalDataSource.clearToken()
             }
     }
-
 }

@@ -9,16 +9,18 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.innovationcampus.android.data.AuthRepository
+import ru.sicampus.bootcamp2026.android.data.AuthRepository
 import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.data.source.AuthNetworkDataSource
 import ru.sicampus.bootcamp2026.android.domain.auth.CheckAndSaveAuthUseCase
 import ru.sicampus.bootcamp2026.android.domain.auth.CheckAuthFormatUseCase
-import ru.innovationcampus.android.ui.screen.auth.AuthState
 import ru.sicampus.bootcamp2026.android.ui.nav.HomeRoute
+import ru.sicampus.bootcamp2026.android.ui.nav.SignUpRoute
 
 class AuthViewModel : ViewModel() {
+
     private val checkAuthFormatUseCase by lazy { CheckAuthFormatUseCase() }
+
     private val checkAndSaveAuthCodeUseCase by lazy {
         CheckAndSaveAuthUseCase(
             AuthRepository(
@@ -27,6 +29,7 @@ class AuthViewModel : ViewModel() {
             )
         )
     }
+
     private val _uiState = MutableStateFlow<AuthState>(
         AuthState.Data(
             isEnabledSend = false,
@@ -36,27 +39,30 @@ class AuthViewModel : ViewModel() {
     val uiState: StateFlow<AuthState> = _uiState.asStateFlow()
 
     private val _actionFlow = MutableSharedFlow<AuthAction>()
-
     val actionFlow = _actionFlow.asSharedFlow()
 
     fun onIntent(intent: AuthIntent) {
         when (intent) {
+
             is AuthIntent.Send -> {
                 viewModelScope.launch {
-                    checkAndSaveAuthCodeUseCase.invoke(intent.login, intent.password).fold(
-                        onSuccess = {
-                            _actionFlow.emit(
-                                AuthAction.OpenScreen(HomeRoute)
-                            )
-                        },
-                        onFailure = { error ->
-                            updateStateIfData { oldState ->
-                                oldState.copy(
+                    _uiState.value = AuthState.Loading
+
+                    checkAndSaveAuthCodeUseCase
+                        .invoke(intent.login, intent.password)
+                        .fold(
+                            onSuccess = {
+                                _actionFlow.emit(
+                                    AuthAction.OpenScreen(HomeRoute)
+                                )
+                            },
+                            onFailure = { error ->
+                                _uiState.value = AuthState.Data(
+                                    isEnabledSend = true,
                                     error = error.message
                                 )
                             }
-                        }
-                    )
+                        )
                 }
             }
 
@@ -71,13 +77,22 @@ class AuthViewModel : ViewModel() {
                     )
                 }
             }
+
+            is AuthIntent.NavigateToSignUp -> {
+                viewModelScope.launch {
+                    _actionFlow.emit(
+                        AuthAction.OpenScreen(SignUpRoute)
+                    )
+                }
+            }
         }
     }
 
-    private fun updateStateIfData(lambda: (AuthState.Data) -> AuthState) {
+    private fun updateStateIfData(
+        reducer: (AuthState.Data) -> AuthState
+    ) {
         _uiState.update { state ->
-            (state as? AuthState.Data)?.let { lambda.invoke(it) } ?: state
+            (state as? AuthState.Data)?.let(reducer) ?: state
         }
-
     }
 }

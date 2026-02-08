@@ -1,4 +1,4 @@
-package ru.innovationcampus.android.ui.screen.auth
+package ru.sicampus.bootcamp2026.android.ui.testScreens.auth
 
 sealed interface AuthState {
     object Loading: AuthState

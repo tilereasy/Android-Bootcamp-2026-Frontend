@@ -1,23 +1,51 @@
 package ru.sicampus.bootcamp2026.android.ui.testScreens.home
 
-import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
-import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
-import ru.sicampus.bootcamp2026.android.ui.components.MeetingUi
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,14 +54,21 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import ru.sicampus.bootcamp2026.R
+import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
-import ru.sicampus.bootcamp2026.android.ui.theme.AppTheme
+import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
+import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
+import ru.sicampus.bootcamp2026.android.ui.utils.toMeetingUi
 import ru.sicampus.bootcamp2026.android.ui.theme.DarkBlue
 import ru.sicampus.bootcamp2026.android.ui.theme.IconsGrey
 import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
@@ -42,11 +77,13 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 
 
-private enum class HomeViewType(val title: String) {
-    WEEK("Неделя"),
-    MONTH("Месяц")
+private enum class HomeViewType(@StringRes val titleRes: Int) {
+    WEEK(R.string.week),
+    MONTH(R.string.month)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,197 +91,318 @@ private enum class HomeViewType(val title: String) {
 fun HomeScreen(
     onNotificationsClick: () -> Unit = {},
     navController: NavHostController,
+    viewModel: HomeViewModel
 ) {
     var viewType by remember { mutableStateOf(HomeViewType.WEEK) }
     var showViewTypeMenu by remember { mutableStateOf(false) }
 
-    // неотвеченные приглашения, уведы
-    val pendingInvitesCount by remember { mutableStateOf(2) }
-
     var anchorDate by remember { mutableStateOf(LocalDate.now()) }
-
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
-    // кружочек с кол-во встреч
-    val meetingsCountByDate = remember {
-        mapOf(
-            LocalDate.now() to 2,
-            LocalDate.now().plusDays(1) to 1,
-            LocalDate.now().plusDays(2) to 3,
-            LocalDate.now().minusDays(2) to 1
-        )
+    val state by viewModel.state.collectAsState()
+
+    val listState = rememberLazyListState()
+
+    val scope = rememberCoroutineScope()
+
+    val hasPending = state.hasPendingInvites
+
+    val myUserId by produceState<Long?>(initialValue = null) {
+        value = AuthLocalDataSource.getUserId()
     }
 
-    Scaffold(
-        bottomBar = {
-            CustomNavigationBar(
-                navController = navController
-            )
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val obs = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshPendingInvitesBadge()
+            }
         }
+        lifecycleOwner.lifecycle.addObserver(obs)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(obs) }
+    }
+
+    fun scrollToTop() {
+        scope.launch {
+            listState.animateScrollToItem(0)
+        }
+    }
+
+    LaunchedEffect(state.selectedDate) {
+        listState.scrollToItem(0)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFirstPage(selectedDate)
+    }
+
+    LaunchedEffect(viewType, anchorDate) {
+        when (viewType) {
+            HomeViewType.WEEK -> {
+                viewModel.loadWeek(startOfWeek(anchorDate))
+            }
+            HomeViewType.MONTH -> {
+                val ym = YearMonth.from(anchorDate)
+                val monthParam = "%04d-%02d".format(ym.year, ym.monthValue) // "2026-02"
+                viewModel.loadMonth(monthParam)
+            }
+        }
+    }
+
+    // ПАГИНАЦИЯ
+    LaunchedEffect(listState, state.selectedDate, state.isLast) {
+        snapshotFlow {
+            val layout = listState.layoutInfo
+            val total = layout.totalItemsCount
+            val lastVisible = layout.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+            total > 0 &&
+                    state.meetings.isNotEmpty() &&
+                    !state.isLast &&
+                    !state.isLoading &&
+                    !state.isLoadingMore &&
+                    lastVisible >= total - 2
+        }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect {
+                viewModel.loadNextPage()
+            }
+    }
+
+
+    Scaffold(
+        bottomBar = { CustomNavigationBar(navController = navController) }
     ) { paddingValues ->
 
-        Column(
+        LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.White)
-                .verticalScroll(rememberScrollState())
+                .background(Color.White),
+            contentPadding = PaddingValues(bottom = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // верхняя строка
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box {
-                    Box(
-                        modifier = Modifier
-                            .border(1.dp, TextGrey, RoundedCornerShape(8.dp))
-                            .clickable { showViewTypeMenu = true }
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = viewType.title,
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                            color = DarkBlue
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = showViewTypeMenu,
-                        onDismissRequest = { showViewTypeMenu = false }
-                    ) {
-                        HomeViewType.entries.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option.title) },
-                                onClick = {
-                                    viewType = option
-                                    showViewTypeMenu = false
-                                    selectedDate = anchorDate
-                                }
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        Box(
+                            modifier = Modifier
+                                .border(1.dp, TextGrey, RoundedCornerShape(8.dp))
+                                .clickable { showViewTypeMenu = true }
+                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(viewType.titleRes),
+                                        fontSize = 16.sp,
+                                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
+                                color = DarkBlue
                             )
                         }
-                    }
-                }
 
-                IconButton(onClick = onNotificationsClick) {
-                    if (pendingInvitesCount > 0) {
-                        BadgedBox(badge = {
-                            Badge(containerColor = Color.Red, contentColor = Color.White) {}
-                        }) {
+                        DropdownMenu(
+                            expanded = showViewTypeMenu,
+                            onDismissRequest = { showViewTypeMenu = false },
+                            containerColor = Color.White,
+                            tonalElevation = 4.dp,
+                            shadowElevation = 8.dp
+                        ) {
+                            HomeViewType.entries.forEach { option ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = stringResource(option.titleRes),
+                                            color = DarkBlue,
+                                            fontFamily = FontFamily(Font(R.font.open_sans_semibold))
+                                        )
+                                    },
+                                    onClick = {
+                                        viewType = option
+                                        showViewTypeMenu = false
+
+                                        selectedDate = anchorDate
+                                        viewModel.loadFirstPage(selectedDate)
+                                        scrollToTop()
+                                    },
+                                    colors = MenuDefaults.itemColors(
+                                        textColor = DarkBlue,
+                                        leadingIconColor = DarkBlue,
+                                        trailingIconColor = DarkBlue,
+                                        disabledTextColor = TextGrey
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    IconButton(onClick = onNotificationsClick) {
+                        Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .padding(end = 4.dp, top = 2.dp)
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
-                                contentDescription = "Notifications",
-                                tint = DarkBlue,
-                                modifier = Modifier.size(30.dp)
+                                contentDescription = stringResource(R.string.home_cd_notifications),
+                                tint = if (hasPending) DarkBlue else IconsGrey,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(30.dp)
                             )
+                            if (hasPending) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = 2.dp, y = (-2).dp)
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.Red)
+                                )
+                            }
                         }
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
-                            tint = IconsGrey,
-                            modifier = Modifier.size(30.dp)
+                    }
+
+                }
+            }
+
+            // Навигация по периоду
+            item {
+                PeriodNavRow(
+                    viewType = viewType,
+                    anchorDate = anchorDate,
+                    onPrev = {
+                        val newAnchor = when (viewType) {
+                            HomeViewType.WEEK -> anchorDate.minusWeeks(1)
+                            HomeViewType.MONTH -> anchorDate.minusMonths(1)
+                        }
+                        anchorDate = newAnchor
+
+                        val newSelected = clampSelectedDate(viewType, newAnchor, selectedDate)
+                        selectedDate = newSelected
+
+                        when (viewType) {
+                            HomeViewType.WEEK -> {
+                                viewModel.loadWeek(startOfWeek(newAnchor))
+                                viewModel.loadFirstPage(newSelected)
+                                scrollToTop()
+                            }
+                            HomeViewType.MONTH -> {
+                                viewModel.loadFirstPage(newSelected)
+                                scrollToTop()
+                            }
+                        }
+                    },
+                    onNext = {
+                        val newAnchor = when (viewType) {
+                            HomeViewType.WEEK -> anchorDate.plusWeeks(1)
+                            HomeViewType.MONTH -> anchorDate.plusMonths(1)
+                        }
+                        anchorDate = newAnchor
+
+                        val newSelected = clampSelectedDate(viewType, newAnchor, selectedDate)
+                        selectedDate = newSelected
+
+                        when (viewType) {
+                            HomeViewType.WEEK -> {
+                                viewModel.loadWeek(startOfWeek(newAnchor))
+                                viewModel.loadFirstPage(newSelected)
+                                scrollToTop()
+                            }
+                            HomeViewType.MONTH -> {
+                                viewModel.loadFirstPage(newSelected)
+                                scrollToTop()
+                            }
+                        }
+                    }
+                )
+            }
+
+            item { Spacer(Modifier.height(12.dp)) }
+
+            //Неделя / Месяц
+            item {
+                when (viewType) {
+                    HomeViewType.WEEK -> {
+                        val weekStart = startOfWeek(anchorDate)
+
+                        WeekStrip(
+                            weekStart = weekStart,
+                            selectedDate = selectedDate,
+                            meetingsCountByDate = state.weekCountsByDate,
+                            onSelectDate = {
+                                selectedDate = it
+                                viewModel.loadFirstPage(it)
+                                scrollToTop()
+                            }
+                        )
+                    }
+
+                    HomeViewType.MONTH -> {
+                        MonthCalendar(
+                            anchorDate = anchorDate,
+                            selectedDate = selectedDate,
+                            meetingsCountByDate = state.monthCountsByDate,
+                            onSelectDate = { date ->
+                                selectedDate = date
+                                viewModel.loadFirstPage(date)
+                                scrollToTop()
+                            },
+                            onDoubleClickDate = { date ->
+                                selectedDate = date
+                                anchorDate = date
+                                viewType = HomeViewType.WEEK
+                                viewModel.loadWeek(startOfWeek(date))
+                                viewModel.loadFirstPage(date)
+                                scrollToTop()
+                            }
                         )
                     }
                 }
             }
 
-            PeriodNavRow(
-                viewType = viewType,
-                anchorDate = anchorDate,
-                onPrev = {
-                    anchorDate = when (viewType) {
-                        HomeViewType.WEEK -> anchorDate.minusWeeks(1)
-                        HomeViewType.MONTH -> anchorDate.minusMonths(1)
-                    }
-                    selectedDate = clampSelectedDate(viewType, anchorDate, selectedDate)
-                },
-                onNext = {
-                    anchorDate = when (viewType) {
-                        HomeViewType.WEEK -> anchorDate.plusWeeks(1)
-                        HomeViewType.MONTH -> anchorDate.plusMonths(1)
-                    }
-                    selectedDate = clampSelectedDate(viewType, anchorDate, selectedDate)
-                }
-            )
+            item { Spacer(Modifier.height(12.dp)) }
 
-            Spacer(Modifier.height(12.dp))
+            // список встреч (пагинация)
+            items(
+                items = state.meetings,
+                key = { it.id }
+            ) { meeting ->
+                val name = state.organizerNames[meeting.organizerId]
+                    ?: stringResource(R.string.home_organizer_fallback, meeting.organizerId)
 
-            when (viewType) {
-                HomeViewType.WEEK -> {
-                    val weekStart = startOfWeek(anchorDate)
+                val ui = meeting.toMeetingUi(organizerName = name, myUserId = myUserId)
 
-                    WeekStrip(
-                        weekStart = weekStart,
-                        selectedDate = selectedDate,
-                        meetingsCountByDate = meetingsCountByDate,
-                        onSelectDate = { selectedDate = it }
-                    )
-
-                    Spacer(Modifier.height(12.dp))
-
-                    MeetingsForDay(
-                        date = selectedDate,
-                        count = meetingsCountByDate[selectedDate] ?: 0
-                    )
-                }
-
-                HomeViewType.MONTH -> {
-                    MonthHeaderPlaceholder(anchorDate)
-                }
-            }
-        }
-    }
-}
-
-// TODO: здесь будет lazy column потом
-@Composable
-private fun MeetingsForDay(
-    date: LocalDate,
-    count: Int
-) {
-    val meetings = remember(date, count) {
-        List(count.coerceAtMost(3)) { idx ->
-            MeetingUi(
-                organizerName = "Организатор",
-                title = "Встреча ${idx + 1}",
-                description = "Описание встречи.",
-                dateText = "%02d.%02d.%d".format(date.dayOfMonth, date.monthValue, date.year),
-                timeText = "${9 + idx}:00 - ${10 + idx}:00"
-            )
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        if (count == 0) {
-            Text(
-                text = "Нет встреч",
-                fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-                color = TextGrey,
-                fontSize = 14.sp
-            )
-        } else {
-            meetings.forEach { meeting ->
                 MeetingCard(
-                    meeting = meeting,
+                    meeting = ui,
                     actions = MeetingCardActions.None
                 )
             }
+
+            if (state.isLoadingMore) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
         }
     }
 }
 
-// навигация влево вправо по неделям/месяцам
+// Навигация влево/вправо
 @Composable
 private fun PeriodNavRow(
     viewType: HomeViewType,
@@ -261,8 +419,7 @@ private fun PeriodNavRow(
             }
             HomeViewType.MONTH -> {
                 val ym = YearMonth.from(anchorDate)
-                "${ym.month.getDisplayName(TextStyle.FULL, Locale("ru"))} ${ym.year}"
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale("ru")) else it.toString() }
+                "${monthNameNominative(ym.monthValue)} ${ym.year}"
             }
         }
     }
@@ -274,7 +431,7 @@ private fun PeriodNavRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onPrev) {
-            Icon(Icons.Default.ChevronLeft, contentDescription = "Prev", tint = DarkBlue)
+            Icon(Icons.Default.ChevronLeft, contentDescription = stringResource(R.string.home_cd_prev), tint = DarkBlue)
         }
 
         Text(
@@ -287,12 +444,13 @@ private fun PeriodNavRow(
         )
 
         IconButton(onClick = onNext) {
-            Icon(Icons.Default.ChevronRight, contentDescription = "Next", tint = DarkBlue)
+            Icon(Icons.Default.ChevronRight, contentDescription = stringResource(R.string.home_cd_next), tint = DarkBlue)
         }
     }
 }
 
-// полоска недели
+
+// Неделя
 @Composable
 private fun WeekStrip(
     weekStart: LocalDate,
@@ -373,10 +531,11 @@ private fun WeekDayItem(
         ) {
             if (count > 0) {
                 Text(
-                    text = if (count > 9) "9+" else count.toString(),
+                    text = if (count > 9) stringResource(R.string.home_more_9) else count.toString(),
                     fontSize = 10.sp,
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -393,20 +552,188 @@ private fun WeekDayItem(
     }
 }
 
-//TODO: месяц заглушка
+// Месяц
 @Composable
-private fun MonthHeaderPlaceholder(anchorDate: LocalDate) {
-    val ym = YearMonth.from(anchorDate)
-    Text(
-        text = "Месяц: ${ym.month.getDisplayName(TextStyle.FULL, Locale("ru"))} ${ym.year}",
-        modifier = Modifier.padding(horizontal = 16.dp),
-        fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
-        fontSize = 16.sp,
-        color = DarkBlue
-    )
+private fun MonthCalendar(
+    anchorDate: LocalDate,
+    selectedDate: LocalDate,
+    meetingsCountByDate: Map<LocalDate, Int>,
+    onSelectDate: (LocalDate) -> Unit,
+    onDoubleClickDate: (LocalDate) -> Unit,
+) {
+    val ym = remember(anchorDate) { YearMonth.from(anchorDate) }
+    val firstOfMonth = remember(ym) { ym.atDay(1) }
+    val daysInMonth = remember(ym) { ym.lengthOfMonth() }
+
+    val leadingEmpty = remember(firstOfMonth) { firstOfMonth.dayOfWeek.value - DayOfWeek.MONDAY.value }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .border(1.dp, TextGrey.copy(alpha = 0.35f), RoundedCornerShape(16.dp))
+            .padding(12.dp)
+    ) {
+        MonthWeekHeader()
+
+        Spacer(Modifier.height(8.dp))
+
+        val totalCells = leadingEmpty + daysInMonth
+        val rows = ((totalCells + 6) / 7)
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            for (row in 0 until rows) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    for (col in 0..6) {
+                        val cellIndex = row * 7 + col
+                        val dayNumber = cellIndex - leadingEmpty + 1
+
+                        if (dayNumber < 1 || dayNumber > daysInMonth) {
+                            MonthEmptyCell()
+                        } else {
+                            val date = ym.atDay(dayNumber)
+                            val count = meetingsCountByDate[date] ?: 0
+
+                            MonthDayCell(
+                                date = date,
+                                count = count,
+                                isSelected = date == selectedDate,
+                                isToday = date == LocalDate.now(),
+                                onClick = { onSelectDate(date) },
+                                onDoubleClick = { onDoubleClickDate(date) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MonthWeekHeader() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        val days = listOf(
+            stringResource(R.string.home_day_mon),
+            stringResource(R.string.home_day_tue),
+            stringResource(R.string.home_day_wed),
+            stringResource(R.string.home_day_thu),
+            stringResource(R.string.home_day_fri),
+            stringResource(R.string.home_day_sat),
+            stringResource(R.string.home_day_sun),
+        )
+        days.forEach { d ->
+            Text(
+                text = d,
+                modifier = Modifier.width(40.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
+                color = TextGrey,
+                fontFamily = FontFamily(Font(R.font.open_sans_semibold))
+            )
+        }
+    }
+}
+
+@Composable
+private fun MonthEmptyCell() {
+    Box(modifier = Modifier.size(40.dp))
+}
+
+@Composable
+private fun MonthDayCell(
+    date: LocalDate,
+    count: Int,
+    isSelected: Boolean,
+    isToday: Boolean,
+    onClick: () -> Unit,
+    onDoubleClick: () -> Unit
+) {
+    val bg = when {
+        isSelected -> DarkBlue.copy(alpha = 0.12f)
+        else -> Color.Transparent
+    }
+
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(bg)
+            .combinedClickable(
+                onClick = onClick,
+                onDoubleClick = onDoubleClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        // число
+        Text(
+            text = date.dayOfMonth.toString(),
+            fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.open_sans_extrabold)),
+            color = DarkBlue
+        )
+
+        // точки/полоска встреч снизу
+        if (count > 0) {
+            val maxDots = 5
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 4.dp)
+                    .height(4.dp)
+                    .fillMaxWidth(0.9f),
+                contentAlignment = Alignment.Center
+            ) {
+                if (count <= maxDots) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(count) {
+                            Box(
+                                modifier = Modifier
+                                    .size(4.dp)
+                                    .clip(CircleShape)
+                                    .background(DarkBlue)
+                            )
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(DarkBlue)
+                    )
+                }
+            }
+        }
+
+        // маркер "сегодня"
+        if (isToday) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 4.dp, end = 4.dp)
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(Color.Red)
+            )
+        }
+    }
 }
 
 
+
+// доп функции
 private fun startOfWeek(date: LocalDate): LocalDate {
     val dow = date.dayOfWeek.value // Mon=1..Sun=7
     return date.minusDays((dow - DayOfWeek.MONDAY.value).toLong())
@@ -428,9 +755,11 @@ private fun formatShortDate(d: LocalDate): String {
     return "${d.dayOfMonth} $month"
 }
 
-private fun formatDayTitle(d: LocalDate): String {
-    val dow = d.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru")).replace(".", "")
+private fun monthNameNominative(monthValue: Int): String {
+    val months = listOf(
+        "январь", "февраль", "март", "апрель", "май", "июнь",
+        "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"
+    )
+    return months[monthValue - 1]
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale("ru")) else it.toString() }
-    return "$dow, ${formatShortDate(d)}"
 }
-

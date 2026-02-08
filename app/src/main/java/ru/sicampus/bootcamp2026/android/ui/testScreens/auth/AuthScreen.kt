@@ -3,7 +3,6 @@ package ru.sicampus.bootcamp2026.android.ui.testScreens.auth
 import android.view.WindowManager
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,14 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,8 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -41,18 +35,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import ru.innovationcampus.android.ui.screen.auth.AuthState
 import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.nav.AuthRoute
+import ru.sicampus.bootcamp2026.android.ui.nav.HomeRoute
+import ru.sicampus.bootcamp2026.android.ui.testScreens.signUp.SecureScreen
 import ru.sicampus.bootcamp2026.android.ui.theme.ErrorRed
-import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
+import ru.sicampus.bootcamp2026.android.ui.theme.Grey
 
 @Composable
 fun AuthScreen(
@@ -65,7 +59,22 @@ fun AuthScreen(
     LaunchedEffect(Unit) {
         viewModel.actionFlow.collect { action ->
             when (action) {
-                is AuthAction.OpenScreen -> navController.navigate(action.route)
+                is AuthAction.OpenScreen -> {
+                    when (action.route) {
+                        is HomeRoute -> {
+                            navController.navigate(HomeRoute) {
+                                popUpTo(AuthRoute) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+
+                        else -> {
+                            navController.navigate(action.route)
+                        }
+                    }
+                }
             }
         }
     }
@@ -80,13 +89,13 @@ fun AuthScreen(
         Spacer(modifier = Modifier.height(210.dp))
 
         Text(
-            text = "neRakov MEET",
+            text = stringResource(R.string.neRakov_Meet),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily(Font(R.font.open_sans_bold))
         )
         when (val currentState = state) {
-            is AuthState.Data -> Content(viewModel, currentState)
+            is AuthState.Data -> Content(viewModel, currentState, navController)
             is AuthState.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.size(64.dp)
@@ -99,7 +108,8 @@ fun AuthScreen(
 @Composable
 private fun Content(
     viewModel: AuthViewModel,
-    state: AuthState.Data
+    state: AuthState.Data,
+    navController: NavController
 ) {
     var inputLogin by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
@@ -164,9 +174,27 @@ private fun Content(
     ) {
         Text(stringResource(R.string.sign_in_button))
     }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    // Кнопка "Зарегистрироваться"
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 65.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Grey
+        ),
+        onClick = {
+            viewModel.onIntent(AuthIntent.NavigateToSignUp)
+        }
+    ) {
+        Text("Зарегистрироваться")
+    }
+
     if (state.error != null) {
 
-        Spacer(modifier = Modifier.height(65.dp))
+        Spacer(modifier = Modifier.height(45.dp))
 
         Box(
             modifier = Modifier
