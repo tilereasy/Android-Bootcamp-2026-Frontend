@@ -18,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +42,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.sicampus.bootcamp2026.R
 import ru.sicampus.bootcamp2026.android.ui.components.CustomTextField
+import ru.sicampus.bootcamp2026.android.ui.nav.AuthRoute
+import ru.sicampus.bootcamp2026.android.ui.nav.HomeRoute
+import ru.sicampus.bootcamp2026.android.ui.testScreens.signUp.SecureScreen
 import ru.sicampus.bootcamp2026.android.ui.theme.ErrorRed
 import ru.sicampus.bootcamp2026.android.ui.theme.Grey
 
@@ -57,7 +59,24 @@ fun AuthScreen(
     LaunchedEffect(Unit) {
         viewModel.actionFlow.collect { action ->
             when (action) {
-                is AuthAction.OpenScreen -> navController.navigate(action.route)
+                is AuthAction.OpenScreen -> {
+                    when (action.route) {
+                        is HomeRoute -> {
+                            // Переход на HomeRoute с очисткой стека авторизации
+                            navController.navigate(HomeRoute) {
+                                popUpTo(AuthRoute) {
+                                    inclusive = true  // Удаляем AuthRoute из стека
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+
+                        else -> {
+                            // Обычная навигация для других экранов
+                            navController.navigate(action.route)
+                        }
+                    }
+                }
             }
         }
     }

@@ -45,6 +45,7 @@ class MeetingsNetworkDataSource {
             addAuthHeader()
             parameter("month", month)
         }.body()
+    }
     suspend fun createMeeting(
         organizerId: Long,
         title: String,
@@ -65,35 +66,6 @@ class MeetingsNetworkDataSource {
                     )
                 )
             }
-            if (result.status == HttpStatusCode.OK || result.status == HttpStatusCode.Created) {
-                result.body<MeetingResponse>()
-            } else {
-                error("Failed to create meeting: ${result.status}")
-            }
-        }
-    }
-
-    suspend fun createMeeting(
-        organizerId: Long,
-        title: String,
-        description: String,
-        startAt: String,
-        endAt: String
-    ): Result<MeetingResponse> = withContext(Dispatchers.IO) {
-        runCatching {
-            val result = Network.client.post("${Network.HOST}/api/meetings") {
-                addAuthHeader()
-                setBody(
-                    CreateMeetingRequest(
-                        organizerId = organizerId,
-                        title = title,
-                        description = description,
-                        startAt = startAt,
-                        endAt = endAt
-                    )
-                )
-            }
-
             if (result.status == HttpStatusCode.OK || result.status == HttpStatusCode.Created) {
                 result.body<MeetingResponse>()
             } else {

@@ -6,6 +6,7 @@ import ru.sicampus.bootcamp2026.android.data.dto.PersonDto
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 
 class PersonsNetworkDataSource {
     suspend fun getPerson(id: Long): Result<PersonDto> = runCatching {
@@ -26,4 +27,40 @@ class PersonsNetworkDataSource {
             }
         }
     }
+
+    /**
+     * Получить всех сотрудников с пагинацией
+     * Для поиска запрашиваем большую страницу (например, 1000 сотрудников)
+     */
+    suspend fun getAllPersons(page: Int = 0, size: Int = 20): Result<PersonPageResponse> = withContext(Dispatchers.IO) {
+        runCatching {
+            val result = Network.client.get("${Network.HOST}/api/person") {
+                addAuthHeader()
+                url {
+                    parameters.append("page", page.toString())
+                    parameters.append("size", size.toString())
+                }
+            }
+            if (result.status == HttpStatusCode.OK) {
+                result.body<PersonPageResponse>()
+            } else {
+                error("Failed to fetch persons")
+            }
+        }
+    }
 }
+
+/**
+ * Ответ с пагинацией от /api/person
+ */
+@Serializable
+data class PersonPageResponse(
+    val content: List<PersonResponse>,
+    val totalPages: Int,
+    val totalElements: Long,
+    val size: Int,
+    val number: Int,
+    val first: Boolean,
+    val last: Boolean,
+    val empty: Boolean
+)
