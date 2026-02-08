@@ -188,7 +188,7 @@ private fun CreateMeetingContent(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 25.dp)
+                            .padding(start = 25.dp, end = 25.dp, bottom = 5.dp)
                             .clickable {
                                 viewModel.onIntent(
                                     CreateMeetingIntent.AddParticipant(
@@ -244,7 +244,7 @@ private fun CreateMeetingContent(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 25.dp),
+                            .padding(start = 25.dp, end = 25.dp, bottom = 5.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.Unspecified
                         )
