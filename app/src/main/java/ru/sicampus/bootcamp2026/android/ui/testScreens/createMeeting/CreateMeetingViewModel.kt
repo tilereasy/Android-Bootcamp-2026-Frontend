@@ -20,6 +20,9 @@ import ru.sicampus.bootcamp2026.android.domain.invitation.CreateMeetingWithInvit
 import ru.sicampus.bootcamp2026.android.domain.invitation.SearchPersonByEmailUseCase
 import java.time.*
 import java.time.format.DateTimeFormatter
+import ru.sicampus.bootcamp2026.App
+import ru.sicampus.bootcamp2026.R
+
 
 class CreateMeetingViewModel : ViewModel() {
 
@@ -48,9 +51,10 @@ class CreateMeetingViewModel : ViewModel() {
     private val _actionFlow = MutableSharedFlow<CreateMeetingAction>()
     val actionFlow = _actionFlow.asSharedFlow()
 
-    // Job для debounce поиска
     private var searchJob: Job? = null
-    private val SEARCH_DELAY_MS = 500L // Задержка перед поиском (500мс)
+    private val SEARCH_DELAY_MS = 500L
+
+    private fun str(id: Int): String = App.context.getString(id)
 
     fun onIntent(intent: CreateMeetingIntent) {
         when (intent) {
@@ -83,7 +87,6 @@ class CreateMeetingViewModel : ViewModel() {
                 updateStateIfData {
                     it.copy(searchQuery = intent.query)
                 }
-                // Автоматический поиск с debounce
                 searchWithDebounce(intent.query)
             }
 
@@ -115,17 +118,11 @@ class CreateMeetingViewModel : ViewModel() {
         }
     }
 
-    /**
-     * Поиск с задержкой (debounce)
-     * Отменяет предыдущий поиск и запускает новый через SEARCH_DELAY_MS
-     */
     private fun searchWithDebounce(query: String) {
-        // Отменяем предыдущий поиск
         searchJob?.cancel()
 
         val trimmedQuery = query.trim()
 
-        // Если запрос слишком короткий, очищаем результаты
         if (trimmedQuery.length < 3) {
             updateStateIfData {
                 it.copy(
@@ -136,35 +133,25 @@ class CreateMeetingViewModel : ViewModel() {
             return
         }
 
-        // Запускаем новый поиск с задержкой
         searchJob = viewModelScope.launch {
             delay(SEARCH_DELAY_MS)
             searchPersonInternal(trimmedQuery)
         }
     }
 
-    /**
-     * Публичный метод поиска (для кнопки "Найти", если нужна)
-     */
     private fun searchPerson() {
         val state = (_uiState.value as? CreateMeetingState.Data) ?: return
         val query = state.searchQuery.trim()
         if (query.isBlank()) return
-
-        // Отменяем debounce и ищем сразу
         searchJob?.cancel()
         viewModelScope.launch {
             searchPersonInternal(query)
         }
     }
 
-    /**
-     * Внутренняя логика поиска
-     */
     private suspend fun searchPersonInternal(query: String) {
         val state = (_uiState.value as? CreateMeetingState.Data) ?: return
 
-        // Минимальная длина для поиска
         if (query.length < 3) {
             updateStateIfData {
                 it.copy(
@@ -179,7 +166,6 @@ class CreateMeetingViewModel : ViewModel() {
 
         searchPersonByEmailUseCase.invoke(query).fold(
             onSuccess = { persons ->
-                // Фильтруем уже добавленных участников
                 val filteredPersons = persons.filter { person ->
                     state.participants.none { it.id == person.id }
                 }
@@ -241,21 +227,18 @@ class CreateMeetingViewModel : ViewModel() {
                     },
                     onFailure = {
                         _uiState.value = state.copy(
-                            error = it.message ?: "Ошибка создания встречи"
+                            error = it.message ?: str(R.string.cm_error_create_failed)
                         )
                     }
                 )
             } catch (e: Exception) {
                 _uiState.value = state.copy(
-                    error = e.message ?: "Неизвестная ошибка"
+                    error = e.message ?: str(R.string.cm_error_unknown)
                 )
             }
         }
     }
 
-    /**
-     * ЛОКАЛЬНОЕ время пользователя → UTC ISO-8601
-     */
     private fun convertToIsoUtc(date: String, hour: String): String {
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
@@ -279,14 +262,19 @@ class CreateMeetingViewModel : ViewModel() {
 
     private fun getValidationHint(state: CreateMeetingState.Data): String? {
         return when {
-            state.title.isBlank() -> "Введите название встречи"
-            state.description.isBlank() -> "Введите описание"
-            state.date.isBlank() -> "Выберите дату"
-            state.startHour.isBlank() -> "Выберите время начала"
-            state.endHour.isBlank() -> "Выберите время окончания"
+            state.title.isBlank() -> str(R.string.cm_validation_title)
+            state.description.isBlank() -> str(R.string.cm_validation_description)
+            state.date.isBlank() -> str(R.string.cm_validation_date)
+            state.startHour.isBlank() -> str(R.string.cm_validation_start_time)
+            state.endHour.isBlank() -> str(R.string.cm_validation_end_time)
+
+            state.startHour.toIntOrNull() == null || state.endHour.toIntOrNull() == null ->
+                str(R.string.cm_validation_start_time)
+
             state.endHour.toInt() <= state.startHour.toInt() ->
-                "Время окончания должно быть больше времени начала"
-            state.participants.isEmpty() -> "Добавьте хотя бы одного участника"
+                str(R.string.cm_validation_end_after_start)
+
+            state.participants.isEmpty() -> str(R.string.cm_validation_add_participant)
             else -> null
         }
     }

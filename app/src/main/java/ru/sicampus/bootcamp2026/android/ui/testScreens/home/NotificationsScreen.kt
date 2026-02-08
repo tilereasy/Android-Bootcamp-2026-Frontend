@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import ru.sicampus.bootcamp2026.R
+import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
-import ru.sicampus.bootcamp2026.android.ui.components.MeetingUi
 import ru.sicampus.bootcamp2026.android.ui.theme.Black
 import ru.sicampus.bootcamp2026.android.ui.theme.TextGrey
 import ru.sicampus.bootcamp2026.android.ui.theme.White
@@ -36,6 +36,9 @@ fun NotificationsScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
+    val myUserId by produceState<Long?>(initialValue = null) {
+        value = AuthLocalDataSource.getUserId()
+    }
 
     LaunchedEffect(Unit) { viewModel.loadFirstPage() }
 
@@ -132,7 +135,7 @@ fun NotificationsScreen(
                         state.organizerNames[meeting.organizerId]
                             ?: "Организатор #${meeting.organizerId}"
 
-                    val ui = meeting.toMeetingUi(organizerName = organizerName)
+                    val ui = meeting.toMeetingUi(organizerName = organizerName, myUserId = myUserId)
 
                     MeetingCard(
                         meeting = ui,

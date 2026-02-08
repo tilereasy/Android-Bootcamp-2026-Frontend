@@ -22,6 +22,6 @@ data class PageResponse<T>(
 
 @Serializable
 data class MeetingsCountByDateDto(
-    val date: String, // "2026-02-06"
+    val date: String,
     val count: Int
 )

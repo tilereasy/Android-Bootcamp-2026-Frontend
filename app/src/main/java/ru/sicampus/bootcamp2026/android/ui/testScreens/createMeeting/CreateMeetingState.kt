@@ -7,9 +7,9 @@ sealed interface CreateMeetingState {
     data class Data(
         val title: String = "",
         val description: String = "",
-        val date: String = "",  // dd.MM.yyyy
-        val startHour: String = "",  // 09, 10, 11, ... 23
-        val endHour: String = "",    // 10, 11, 12, ... 24
+        val date: String = "",
+        val startHour: String = "",
+        val endHour: String = "",
         val participants: List<Participant> = emptyList(),
         val searchQuery: String = "",
         val searchResults: List<PersonResponse> = emptyList(),

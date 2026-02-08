@@ -62,17 +62,15 @@ fun AuthScreen(
                 is AuthAction.OpenScreen -> {
                     when (action.route) {
                         is HomeRoute -> {
-                            // Переход на HomeRoute с очисткой стека авторизации
                             navController.navigate(HomeRoute) {
                                 popUpTo(AuthRoute) {
-                                    inclusive = true  // Удаляем AuthRoute из стека
+                                    inclusive = true
                                 }
                                 launchSingleTop = true
                             }
                         }
 
                         else -> {
-                            // Обычная навигация для других экранов
                             navController.navigate(action.route)
                         }
                     }
@@ -91,7 +89,7 @@ fun AuthScreen(
         Spacer(modifier = Modifier.height(210.dp))
 
         Text(
-            text = "neRakov MEET",
+            text = stringResource(R.string.neRakov_Meet),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily(Font(R.font.open_sans_bold))

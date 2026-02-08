@@ -28,10 +28,6 @@ class PersonsNetworkDataSource {
         }
     }
 
-    /**
-     * Получить всех сотрудников с пагинацией
-     * Для поиска запрашиваем большую страницу (например, 1000 сотрудников)
-     */
     suspend fun getAllPersons(page: Int = 0, size: Int = 20): Result<PersonPageResponse> = withContext(Dispatchers.IO) {
         runCatching {
             val result = Network.client.get("${Network.HOST}/api/person") {
@@ -50,9 +46,6 @@ class PersonsNetworkDataSource {
     }
 }
 
-/**
- * Ответ с пагинацией от /api/person
- */
 @Serializable
 data class PersonPageResponse(
     val content: List<PersonResponse>,

@@ -19,7 +19,7 @@ class InvitationsNetworkDataSource {
     ): Result<PageResponse<InvitationWithMeetingDto>> = runCatching {
         Network.client.get("${Network.HOST}/api/invitations/my/with-meeting") {
             addAuthHeader()
-            parameter("status", status.name) // "PENDING"
+            parameter("status", status.name)
             parameter("page", page)
             parameter("size", size)
         }.body()
@@ -27,7 +27,7 @@ class InvitationsNetworkDataSource {
 
     suspend fun respondInvitation(
         id: Long,
-        status: String // "ACCEPTED"/"DECLINED"
+        status: String
     ): Result<Unit> = runCatching {
         Network.client.patch("${Network.HOST}/api/invitations/$id/respond") {
             addAuthHeader()

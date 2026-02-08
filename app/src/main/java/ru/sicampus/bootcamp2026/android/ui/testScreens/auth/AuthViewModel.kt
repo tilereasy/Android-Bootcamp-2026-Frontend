@@ -46,7 +46,6 @@ class AuthViewModel : ViewModel() {
 
             is AuthIntent.Send -> {
                 viewModelScope.launch {
-                    // 👉 ВКЛЮЧАЕМ ЛОАДЕР
                     _uiState.value = AuthState.Loading
 
                     checkAndSaveAuthCodeUseCase
@@ -58,7 +57,6 @@ class AuthViewModel : ViewModel() {
                                 )
                             },
                             onFailure = { error ->
-                                // 👉 ВОЗВРАЩАЕМ UI + ОШИБКУ
                                 _uiState.value = AuthState.Data(
                                     isEnabledSend = true,
                                     error = error.message

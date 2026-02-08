@@ -53,8 +53,6 @@ fun CustomTextField(
             )
         },
 
-
-
         visualTransformation = visualTransformation,
 
         keyboardOptions = KeyboardOptions(

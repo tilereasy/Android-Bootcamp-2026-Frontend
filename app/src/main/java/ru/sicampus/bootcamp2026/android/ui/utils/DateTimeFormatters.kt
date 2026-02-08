@@ -14,9 +14,6 @@ private val DATE_FORMAT =
 private val TIME_FORMAT =
     DateTimeFormatter.ofPattern("HH:mm", RU)
 
-/**
- * UTC ISO → локальное время пользователя
- */
 private fun parseIsoToLocal(iso: String): LocalDateTime {
     return Instant
         .parse(iso)
