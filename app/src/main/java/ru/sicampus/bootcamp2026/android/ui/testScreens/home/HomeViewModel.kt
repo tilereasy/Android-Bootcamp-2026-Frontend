@@ -186,7 +186,6 @@ class HomeViewModel : ViewModel() {
                     hasPendingInvites = page.content.isNotEmpty()
                 )
             }.onFailure {
-                // по желанию: не ломаем UI, просто оставляем старое значение
             }
         }
     }

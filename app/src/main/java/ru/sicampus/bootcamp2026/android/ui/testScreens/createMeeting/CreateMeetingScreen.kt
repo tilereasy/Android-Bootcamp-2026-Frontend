@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ru.sicampus.bootcamp2026.R
@@ -73,7 +75,7 @@ fun CreateMeetingScreen(
                     ) {
                         CircularProgressIndicator()
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Создание встречи...")
+                        Text(stringResource(R.string.create_meeting))
                     }
                 }
             }
@@ -96,7 +98,6 @@ private fun CreateMeetingContent(
     paddingValues: PaddingValues,
     viewModel: CreateMeetingViewModel
 ) {
-    // Для выпадающих списков часов
     var expandedStartHour by remember { mutableStateOf(false) }
     var expandedEndHour by remember { mutableStateOf(false) }
     val hours = (0..23).map { it.toString() }
@@ -116,7 +117,7 @@ private fun CreateMeetingContent(
         Spacer(modifier = Modifier.height(120.dp))
 
         Text(
-            text = "Создание встречи",
+            text = stringResource(R.string.create_meeting),
             fontSize = 24.sp,
             fontFamily = FontFamily(Font(R.font.open_sans_bold))
         )
@@ -127,7 +128,7 @@ private fun CreateMeetingContent(
         CustomTextField(
             value = state.title,
             onValueChange = { viewModel.onIntent(CreateMeetingIntent.UpdateTitle(it)) },
-            label = "Название встречи",
+            label = stringResource(R.string.meeting_name),
             modifier = Modifier,
             textColor = TextGrey
         )
@@ -138,7 +139,7 @@ private fun CreateMeetingContent(
         CustomTextField(
             value = state.description,
             onValueChange = { viewModel.onIntent(CreateMeetingIntent.UpdateDescription(it)) },
-            label = "Описание",
+            label = stringResource(R.string.description),
             modifier = Modifier,
             textColor = TextGrey
         )
@@ -150,17 +151,15 @@ private fun CreateMeetingContent(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            // Поле ввода email (без кнопки "Найти")
             CustomTextField(
                 value = state.searchQuery,
                 onValueChange = { viewModel.onIntent(CreateMeetingIntent.UpdateSearchQuery(it)) },
-                label = "Email сотрудника",
+                label = stringResource(R.string.email_employee),
                 textColor = TextGrey,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Search,
                 keyboardActionOnDone = {
-                    // При нажатии Enter на клавиатуре - поиск сразу
                     viewModel.onIntent(CreateMeetingIntent.SearchPerson)
                 }
             )
@@ -177,7 +176,7 @@ private fun CreateMeetingContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Поиск...",
+                        text = stringResource(R.string.search_employee),
                         fontSize = 12.sp,
                         color = TextGrey
                     )
@@ -222,7 +221,7 @@ private fun CreateMeetingContent(
             } else if (state.searchQuery.isNotBlank() && !state.isSearching && state.searchQuery.length >= 3) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Нет результатов",
+                    text = stringResource(R.string.no_results),
                     fontSize = 14.sp,
                     color = TextGrey,
                     modifier = Modifier.padding(start = 25.dp)
@@ -233,7 +232,7 @@ private fun CreateMeetingContent(
             if (state.participants.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Добавленные участники:",
+                    text = stringResource(R.string.add_participant),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(start = 25.dp)
@@ -332,7 +331,6 @@ private fun CreateMeetingContent(
             Column(
 
             ){
-                // Dropdown для часа начала
                 ExposedDropdownMenuBox(
                     expanded = expandedStartHour,
                     onExpandedChange = { expandedStartHour = !expandedStartHour },
@@ -379,7 +377,6 @@ private fun CreateMeetingContent(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Dropdown для часа окончания
                 ExposedDropdownMenuBox(
                     expanded = expandedEndHour,
                     onExpandedChange = { expandedEndHour = !expandedEndHour },
@@ -430,7 +427,6 @@ private fun CreateMeetingContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Подсказка валидации
         if (state.validationHint != null && !state.isEnabledCreate) {
             Box(
                 modifier = Modifier
@@ -467,7 +463,7 @@ private fun CreateMeetingContent(
                 disabledContentColor = White.copy(alpha = 0.5f)
             )
         ) {
-            Text("Создать", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.create_button), fontWeight = FontWeight.Bold)
         }
 
         // Ошибка

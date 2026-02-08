@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -63,6 +64,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import ru.sicampus.bootcamp2026.R
+import ru.sicampus.bootcamp2026.android.data.source.AuthLocalDataSource
 import ru.sicampus.bootcamp2026.android.ui.components.CustomNavigationBar
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCard
 import ru.sicampus.bootcamp2026.android.ui.components.MeetingCardActions
@@ -75,10 +77,13 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 
-private enum class HomeViewType(val title: String) {
-    WEEK("Неделя"),
-    MONTH("Месяц")
+
+private enum class HomeViewType(@StringRes val titleRes: Int) {
+    WEEK(R.string.week),
+    MONTH(R.string.month)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,6 +106,10 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
 
     val hasPending = state.hasPendingInvites
+
+    val myUserId by produceState<Long?>(initialValue = null) {
+        value = AuthLocalDataSource.getUserId()
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -192,8 +201,8 @@ fun HomeScreen(
                                 .padding(horizontal = 12.dp, vertical = 8.dp)
                         ) {
                             Text(
-                                text = viewType.title,
-                                fontSize = 16.sp,
+                                text = stringResource(viewType.titleRes),
+                                        fontSize = 16.sp,
                                 fontFamily = FontFamily(Font(R.font.open_sans_semibold)),
                                 color = DarkBlue
                             )
@@ -210,7 +219,7 @@ fun HomeScreen(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            option.title,
+                                            text = stringResource(option.titleRes),
                                             color = DarkBlue,
                                             fontFamily = FontFamily(Font(R.font.open_sans_semibold))
                                         )
@@ -242,7 +251,7 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
-                                contentDescription = "Notifications",
+                                contentDescription = stringResource(R.string.home_cd_notifications),
                                 tint = if (hasPending) DarkBlue else IconsGrey,
                                 modifier = Modifier
                                     .align(Alignment.Center)
@@ -366,8 +375,10 @@ fun HomeScreen(
                 items = state.meetings,
                 key = { it.id }
             ) { meeting ->
-                val name = state.organizerNames[meeting.organizerId] ?: "Организатор #${meeting.organizerId}"
-                val ui = meeting.toMeetingUi(organizerName = name)
+                val name = state.organizerNames[meeting.organizerId]
+                    ?: stringResource(R.string.home_organizer_fallback, meeting.organizerId)
+
+                val ui = meeting.toMeetingUi(organizerName = name, myUserId = myUserId)
 
                 MeetingCard(
                     meeting = ui,
@@ -420,7 +431,7 @@ private fun PeriodNavRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onPrev) {
-            Icon(Icons.Default.ChevronLeft, contentDescription = "Prev", tint = DarkBlue)
+            Icon(Icons.Default.ChevronLeft, contentDescription = stringResource(R.string.home_cd_prev), tint = DarkBlue)
         }
 
         Text(
@@ -433,7 +444,7 @@ private fun PeriodNavRow(
         )
 
         IconButton(onClick = onNext) {
-            Icon(Icons.Default.ChevronRight, contentDescription = "Next", tint = DarkBlue)
+            Icon(Icons.Default.ChevronRight, contentDescription = stringResource(R.string.home_cd_next), tint = DarkBlue)
         }
     }
 }
@@ -520,7 +531,7 @@ private fun WeekDayItem(
         ) {
             if (count > 0) {
                 Text(
-                    text = if (count > 9) "9+" else count.toString(),
+                    text = if (count > 9) stringResource(R.string.home_more_9) else count.toString(),
                     fontSize = 10.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
@@ -608,7 +619,15 @@ private fun MonthWeekHeader() {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val days = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
+        val days = listOf(
+            stringResource(R.string.home_day_mon),
+            stringResource(R.string.home_day_tue),
+            stringResource(R.string.home_day_wed),
+            stringResource(R.string.home_day_thu),
+            stringResource(R.string.home_day_fri),
+            stringResource(R.string.home_day_sat),
+            stringResource(R.string.home_day_sun),
+        )
         days.forEach { d ->
             Text(
                 text = d,

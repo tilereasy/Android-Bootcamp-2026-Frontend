@@ -35,7 +35,6 @@ class CreateMeetingRepository(
             startAt = startAt,
             endAt = endAt
         ).mapCatching { meetingResponse ->
-            // Создаем приглашения для каждого участника
             inviteeIds.forEach { inviteeId ->
                 invitationNetworkDataSource.createInvitation(
                     meetingId = meetingResponse.id,
